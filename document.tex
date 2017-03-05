@@ -211,19 +211,48 @@ translation table.
 PyFAI is a Python library used to tranform 2D diffraction images into 1D powder
 diffraction pattern using rebinning of the pixel position to polar coordinates.
 It provides in addition tools to calibrate the detector position, i.e. determine
-where it is located in space from the ellipses drawn by the Debye-Scherrer cones
-intersected by the detector (when used with a planar detector).
+where it is located in space from the conics drawn by the Debye-Scherrer cones
+intersected by the detector (ellipses when the detector is planar and slightly
+inclined). This document describes the processing implemented in pyFAI
+v0.14 which is to be published in 2017.
 
-Azimuthal integration has
+Azimuthal integration is performed in two steps, the first is a pixel-wise
+transformation corresponding the image correction:
+$$
+I_{cor} = frac{I_{raw} - I_{dark}}{F \times \Omega \times P \time A }
+$$
+where $I_{raw}$ is the raw detector signal, $I_{dark}$ is the dark current
+image (may be also the background image for certain experiments), $F$ referes to
+the flat-field correction, $\Omega$ to the solid angle of the given pixel, $P$
+referes to polarization correction and $A$ referes to detector efficiency due
+to in volume absorption due to parallax effects.
+
+For azimuthal integration the numerator of this formula, herafter refered as
+\textem{signal}, is separeted from the denominator which is refered as
+\textem{normalization}.
+
+The rebinning of the data is performed using an histogram of the position (q
+or $2\theta$ values) weighted by the signal.
+This gives the sum of all signal withing a corona.
+A second histogram of the positions is calculated, weighted by the
+normalization this time, which gives the sum of all normalizations.
+
+The average over a ring is then simply the ratio of the two histograms.
+
+In pyFAI the use can chose among multiple pixel splitting schemes, the histogram
+corresponds actually to no splitting at all.
+Histogram is also the easiest algorithm to implement.
+Those histogram calculation can be accelerated using look-up tables \cite{}.
 
 \section{Azimuthal integration of multiple frames taken at multiple geometries}
 
 
 
-\section{Style of the paper}
+\section{Calibration using a Debye-Scherrer diffraction image}
 
 
-\section{The header of the paper}
+\section{Calibration of a goniometer}
+
 
 
 \end{document}
