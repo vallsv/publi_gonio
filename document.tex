@@ -119,9 +119,10 @@ mounted detector}
      % Use lower-case letters in square brackets to link authors to their
      % affiliations; if there is only one affiliation address, remove the [a].
 
+     \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
      \author[a]{J.}{Kieffer}
      \author[a]{V.}{Valls}
-     \cauthor[a]{jerome}{kieffer@esrf.fr}{}
+     
      %\aufn{On leave from Institute
      %of Advanced Research, Albany, Ruritania.}
 
@@ -184,11 +185,15 @@ TODO
 \section{Introduction}
 
 Area detectors mounted on goniometer arms are commonly available for
-powder-diffraction in lab-source diffractometer (for example Rigaku
-HyPix-3000).
+powder-diffraction data acquisition in lab-source diffractometer (for example
+Rigaku HyPix-3000).
 %The larger number of pixels trades-of the resolution for speed.
-On the oposite this moving detector setup is rarely used at synchrotrons where
-larger detectors are often prefered and kept fix during the whole acquisition.
+On the oposite, moving detector setups are rarely used at synchrotrons for
+the data acquisition itself, even if most of the detectors are mounted on a
+moving table.
+So at large facilities like synchrotons, larger detectors are 
+prefered and kept fix during the whole acquisition, often to ease the
+data-reduction step.
 The fixed position setup combined with the speed of modern detectors allows
 easily the acquisition in kinetic mode for following chemical reaction or other
 physical processes.
@@ -197,14 +202,15 @@ Nevertheless high-Q acquisition is needed for Pair-wise Distribution Function
 (PDF) analysis which requires even larger detectors and higher energies to be
 able to cover the Q-range with one single frame.
 When speed is not a critical parameter, such experiment could be done with a
-smaller detector mounted on a moving arm; this setup being commonly available
-on most diffraction beamlines.
+smaller detector mounted on a moving arm which is moved during the
+acquisition; this setup being already available on most diffraction beamlines.
 
-This document presents first the pyFAI library then how to merge multiple
-diffraction images acquired at different positions with this library.
+This document presents first shortly the pyFAI library\cite{} then how to merge
+multiple diffraction images acquired at different positions with this
+library\cite{}. 
 Then it explains how to calibrate the absolute position of every single
-pixel in the detector as function of the parameter of the goniometer or of the
-translation table.
+pixel in the detector when mounted on a goniometer (or of the translation table)
+as function of the parameter of the goniometer. 
 
 \section{The fast azimuthal integration library}
 
@@ -214,13 +220,13 @@ It provides in addition tools to calibrate the detector position, i.e. determine
 where it is located in space from the conics drawn by the Debye-Scherrer cones
 intersected by the detector (ellipses when the detector is planar and slightly
 inclined). This document describes the processing implemented in pyFAI
-v0.14 which is to be published in 2017.
+v0.14 which is to be published in 2017/still under development.
 
 Azimuthal integration is performed in two steps, the first is a pixel-wise
 transformation corresponding the image correction:
 $$
-I_{cor} = frac{I_{raw} - I_{dark}}{F \times \Omega \times P \times A }
-$$
+I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \times
+\Omega \times P \times A } $$
 where $I_{raw}$ is the raw detector signal, $I_{dark}$ is the dark current
 image (may be also the background image for certain experiments), $F$ referes to
 the flat-field correction, $\Omega$ to the solid angle of the given pixel, $P$
@@ -228,24 +234,35 @@ referes to polarization correction and $A$ referes to detector efficiency due
 to in volume absorption due to parallax effects.
 
 For azimuthal integration the numerator of this formula, herafter refered as
-\textem{signal}, is separeted from the denominator which is refered as
-\textem{normalization}.
+\textit{signal}, is separeted from the denominator which is refered as
+\textit{normalization}.
 
-The rebinning of the data is performed using an histogram of the position (q
-or $2\theta$ values) weighted by the signal.
-This gives the sum of all signal withing a corona.
+The rebinning of the data is performed using an histogram of the position ($q$
+or $2\theta$ values) weighted by the \textit{signal}.
+This gives the sum of all signals withing a ring.
 A second histogram of the positions is calculated, weighted by the
-normalization this time, which gives the sum of all normalizations.
+\textit{normalization} this time, which gives the sum of all normalizations
+values.
 
-The average over a ring is then simply the ratio of the two histograms.
+The average signal over a ring is then simply the ratio of the two histograms.
+
+$$
+<I>_{ring} = \frac{\sum\limits_{i _in ring} c_i \times signal_i}
+                  {\sum\limits_{i _in ring} c_i \times normalization_i} 
+$$
+
 
 In pyFAI the use can chose among multiple pixel splitting schemes, the histogram
-corresponds actually to no splitting at all.
-Histogram is also the easiest algorithm to implement.
-Those histogram calculation can be accelerated using look-up tables \cite{}.
+corresponds actually to no splitting at all; histogram being also the easiest
+algorithm to implement and understand. 
+Those multiple pixel splitting schemes have already been described in \cite{}
+and can be accelerate using look-up tables \cite{}.
 
 \section{Azimuthal integration of multiple frames taken at multiple geometries}
 
+The integration of multiple images taken at varying position has first been
+reported for pyFAI in \cite{PyFAI_PDJ}. 
+The procedure is conceptually similar to the integration    
 
 
 \section{Calibration using a Debye-Scherrer diffraction image}
