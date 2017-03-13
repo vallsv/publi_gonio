@@ -334,28 +334,34 @@ The drawback is that many parameter are correlated:
 \end{itemize}
 Those correlations between parameters can be addressed by fixing one of
 the two parameters which provides a much better fit (numerical stability).
+Moreover the \textit{rot3} is never refined but can be used to simulate the
+rotation of the experimental setup azimuthaly.
 
 The calibration is currently performed using a semi-graphical
 application called \textit{pyFAI-calib}, available since the origin of the library 
 which generates a \textsc{poni}-file containing the geometry and a
 \textsc{npt}-file containing the control points used to perform the
 least-squares fitting.
-A new graphical application, replacing the current one for performing this
-fitting is under development and will be available for the final version of
-pyFAI v0.14.
+A new graphical application based on the \textit{silx}\cite{silx} library will
+replacing the calibration tool. 
+This geometry optimization tool is currently under development and will be
+available for the final version of pyFAI v0.14. 
 
 \section{Calibration of a goniometer}
 
 
 \ack{Acknowledgements}
-TODO
+
 We would like to thank all ESRF beamline teams for supporting the
-pyFAI development, especially BM01, BM02, ID02, ID11, ID13, ID15, ID21, ID23,
-BM26, ID29, BM29 and ID30.
-In the instrumentation division (ISDD) we would like to thank Claudio
-Ferrero, head of data analysis unit, for the critical revision of this
-manuscript and Andy G\"otz, head of software group, for supporting the
-algorithmic work performed on pyFAI in addition to the features exposed to the
-user.
+pyFAI development, and especially the two CRG beamlines BM02 (D2AM) and BM20
+(ROBL) which provided beamtime and test-data to allow debuging the goniometer
+optimization tool.
+We would also like to thank the French CNRS for financing the IR-drx project in
+2015 and 2016 which acted as a catalizer on the goniometer refinement,
+and the other participants to the project, especially Serge Cohen from the
+Ipanema institute, the DiffAbs beamline and Frédéric-Emmanuel Picca from
+Synchrotron-Soleil.
+In the instrumentation division (ISDD) we would like to thank V. A. Solé,  head
+of data analysis unit and leader of the silx project for his support.
 
 \end{document}
