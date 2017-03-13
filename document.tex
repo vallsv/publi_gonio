@@ -247,29 +247,115 @@ values.
 The average signal over a ring is then simply the ratio of the two histograms.
 
 $$
-<I>_{ring} = \frac{\sum\limits_{i _in ring} c_i \times signal_i}
-                  {\sum\limits_{i _in ring} c_i \times normalization_i} 
+<I>_{ring} = \frac{\sum\limits_{i \in ring} c_i \times signal_i}
+                  {\sum\limits_{i \in ring} c_i \times normalization_i} 
 $$
 
-
-In pyFAI the use can chose among multiple pixel splitting schemes, the histogram
-corresponds actually to no splitting at all; histogram being also the easiest
-algorithm to implement and understand. 
-Those multiple pixel splitting schemes have already been described in \cite{}
-and can be accelerate using look-up tables \cite{}.
+In this equation, the parameter $c_i$ correspond to the fraction of area of a
+pixel falling into a specific bin. 
+As pyFAI provides multiple pixel splitting schemes, the differ only by their
+$c_i$ coefficients. 
+Simple weighted histograms corresponds actually to no splitting at all; in this
+case the parameter $c_i$ is 1 for pixels falling in the bin an 0 for all the
+others.
+  
+Those multiple pixel splitting schemes have already been described in
+\cite{fv5028} and can be stored to accelerate the calculation of the
+histogram \cite{kieffer_ashiotis-proc-euroscipy-2014}.
 
 \section{Azimuthal integration of multiple frames taken at multiple geometries}
 
 The integration of multiple images taken at varying position has first been
 reported for pyFAI in \cite{PyFAI_PDJ}. 
-The procedure is conceptually similar to the integration    
+The procedure is conceptually similar to the integration on a single image,
+except that the various histograms, all performed on the same grid, are summed
+together, signals from all imges on the numerator and normalizations from all
+image on the denominator.
 
+$$
+<I>_{ring} = \frac{\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
+signal_i} {\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
+normalization_i} 
+$$
+
+The normalization for solid angle correction $\Omega$ has to be performed in
+absolute solid-angle (unlike in single frame integration) as different
+geometries may have very different sample-detector distances. 
+This explains why a single image integrated in multi-geometry mode  has
+intensity orders of magnitude larger than with the normal pyFAI integration
+methods.
 
 \section{Calibration using a Debye-Scherrer diffraction image}
 
+The calibration of a detector position is performed using the Debye-Scherrer
+rings collected from a reference powder called \textit{calibrant}.
+The rings are extracted automatically and control points are placed at the
+local maxima on the rings.
+The geometry of the experiment is obtained from a least squares fitting of
+the $2\theta$ angles.
+In this work we will call them ``rings'' even if, for planar detector,
+they are actually the conic intersections of the X-ray beam cones
+with the detector plane.
+For non planar detectors detector (also supported by pyFAI) those ``rings'' can
+be any type of curve.
+
+The least squares refinement is performed on an internal paramter-set containing
+6  parameters (or 7 with the wavelength), definined around the
+concept of Point Of Normal Incidence (hereafter named \textsc{poni}) which is
+the orthongonal projection  of the sample position on the detector plan 
+(or z=0 when the detector is non-planar and z varies from pixel to pixel).
+This \textsc{poni} differs from the beam-center used in programs like
+Fit2D\cite{fit2d} as the \textsc{poni} is always defined and often lies within
+the detector's image.
+So the parameters refined are the following:
+\begin{itemize}
+  \item \textit{dist}: the distance in meter from the sample position to the
+  \textsc{poni}
+  \item \textit{poni1} and \textit{poni2}: coordinate of the
+  \textsc{poni} in meter within the detector plan (z=0) along the slow and fast
+  dimention of the detector image (usually the row number and the column
+  number, i.e. ``y, x'').
+  \item \textit{rot1}, \textit{rot2} and \textit{rot3} which correspond to the
+  rotation, expressed in radians, of the detector placed at the proper
+  distance of the sample, along the 3 axis of the laboratory. The detector is
+  first rotated around the verical axis (rot1), then around the horizontal axis
+  (rot2) and finally around the incomming beam (rot3). 
+  \textsc{poni}
+\end{itemize}
+
+This parameter set allows the description of any detector position in space.
+The drawback is that many parameter are correlated: 
+\begin{itemize}
+  \item \textit{dist-wavelenght}: reducing the wavelength is equivalent to
+  increase the distance unless the diffraction angle $2\theta$ is actually
+  large. It is adviced to fix one of the the two. 
+  \item \textit{rot1-poni2} and \textit{rot2-poni1} as a small rotation can be
+  interepreted as a larger translation. 
+\end{itemize}
+Those correlations between parameters can be addressed by fixing one of
+the two parameters which provides a much better fit (numerical stability).
+
+The calibration is currently performed using a semi-graphical
+application called \textit{pyFAI-calib}, available since the origin of the library 
+which generates a \textsc{poni}-file containing the geometry and a
+\textsc{npt}-file containing the control points used to perform the
+least-squares fitting.
+A new graphical application, replacing the current one for performing this
+fitting is under development and will be available for the final version of
+pyFAI v0.14.
 
 \section{Calibration of a goniometer}
 
 
+\ack{Acknowledgements}
+TODO
+We would like to thank all ESRF beamline teams for supporting the
+pyFAI development, especially BM01, BM02, ID02, ID11, ID13, ID15, ID21, ID23,
+BM26, ID29, BM29 and ID30.
+In the instrumentation division (ISDD) we would like to thank Claudio
+Ferrero, head of data analysis unit, for the critical revision of this
+manuscript and Andy G\"otz, head of software group, for supporting the
+algorithmic work performed on pyFAI in addition to the features exposed to the
+user.
 
 \end{document}
