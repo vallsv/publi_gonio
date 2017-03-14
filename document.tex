@@ -119,9 +119,9 @@ mounted detector}
      % Use lower-case letters in square brackets to link authors to their
      % affiliations; if there is only one affiliation address, remove the [a].
 
-     \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
-     \author[a]{J.}{Kieffer}
      \author[a]{V.}{Valls}
+     \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
+     
      
      %\aufn{On leave from Institute
      %of Advanced Research, Albany, Ruritania.}
@@ -131,27 +131,22 @@ mounted detector}
 
      % Use \shortauthor to indicate an abbreviated author list for use in
      % running heads (you will need to uncomment it).
+     \shortauthor{Valls & Kieffer}
 
-\shortauthor{Kieffer et al.}
+%\shortauthor{Kieffer et al.}
 
      % Use \vita if required to give biographical details (for authors of
      % invited review papers only). Uncomment it.
 
 
-%\vita{Joe Soape is an archetypal generic author, whose association with the
-%much-travelled Kilroy has extended over many years. He travels to work each
-%day on a Clapham omnibus.
-%\\
-%John Doe is also a generic individual with extensive experience of legal and
-%forensic matters.}
-
      % Keywords (required for Journal of Synchrotron Radiation only)
      % Use the \keyword macro for each word or phrase, e.g.
      % \keyword{X-ray diffraction}\keyword{muscle}
 
-\keyword{\LaTeX}
-\keyword{class file}
-\keyword{documentation}
+\keyword{powder diffraction}
+\keyword{goniomater}
+\keyword{geometry calibration}
+
 
      % PDB and NDB reference codes for structures referenced in the article and
      % deposited with the Protein Data Bank and Nucleic Acids Database (Acta
@@ -285,8 +280,10 @@ This explains why a single image integrated in multi-geometry mode  has
 intensity orders of magnitude larger than with the normal pyFAI integration
 methods.
 
-\section{Calibration using a Debye-Scherrer diffraction image}
+\section{Calibration of the detector position}
 
+\subsection{Principle of the calibration using a Debye-Scherrer diffraction
+image}
 The calibration of a detector position is performed using the Debye-Scherrer
 rings collected from a reference powder called \textit{calibrant}.
 The rings are extracted automatically and control points are placed at the
@@ -300,13 +297,14 @@ For non planar detectors detector (also supported by pyFAI) those ``rings'' can
 be any type of curve.
 
 The least squares refinement is performed on an internal paramter-set containing
-6  parameters (or 7 with the wavelength), definined around the
+six  parameters (or seven with the wavelength), definined around the
 concept of Point Of Normal Incidence (hereafter named \textsc{poni}) which is
 the orthongonal projection  of the sample position on the detector plan 
 (or z=0 when the detector is non-planar and z varies from pixel to pixel).
 This \textsc{poni} differs from the beam-center used in programs like
 Fit2D\cite{fit2d} as the \textsc{poni} is always defined and often lies within
-the detector's image.
+the detector's image, as the detector best works when facing the sample.
+
 So the parameters refined are the following:
 \begin{itemize}
   \item \textit{dist}: the distance in meter from the sample position to the
@@ -324,44 +322,153 @@ So the parameters refined are the following:
 \end{itemize}
 
 This parameter set allows the description of any detector position in space.
-The drawback is that many parameter are correlated: 
+The drawback is that some parameterd are correlated: 
 \begin{itemize}
   \item \textit{dist-wavelenght}: reducing the wavelength is equivalent to
   increase the distance unless the diffraction angle $2\theta$ is actually
-  large. It is adviced to fix one of the the two. 
+  large. It is adviced to fix one of the the two unless the data are good
+  quality and the angles are large.
   \item \textit{rot1-poni2} and \textit{rot2-poni1} as a small rotation can be
-  interepreted as a larger translation. 
+  interepreted as a larger translation. Fixing one decreases the uncertainty of
+  the other by 2 orders of magnitude.
 \end{itemize}
-Those correlations between parameters can be addressed by fixing one of
-the two parameters which provides a much better fit (numerical stability).
-Moreover the \textit{rot3} is never refined but can be used to simulate the
-rotation of the experimental setup azimuthaly.
 
-The calibration is currently performed using a semi-graphical
-application called \textit{pyFAI-calib}, available since the origin of the library 
-which generates a \textsc{poni}-file containing the geometry and a
-\textsc{npt}-file containing the control points used to perform the
-least-squares fitting.
-A new graphical application based on the \textit{silx}\cite{silx} library will
-replacing the calibration tool. 
-This geometry optimization tool is currently under development and will be
-available for the final version of pyFAI v0.14. 
+Moreover the \textit{rot3} is never refined and stays at zero unless specified
+differently.  This can be used to simulate the rotation of the
+experimental setup azimuthally. It has not effect in most cases, except for the
+polarization of the incident beam during the diffraction process, which is the
+main anisotropic contribution to the signal.
 
-\section{Calibration of a goniometer}
+The parameters of the calibration are saved in text-files with the ``.poni''
+extension and contain simply the six geometrical parameters, the detector
+definition and the wavelength. 
+This file can subsequently be loaded into an \textit{azimuthal integrator}
+object, ready to perform azimuthal integration.
 
+\subsection{Graphical user interface}
 
+The calibration used to be performed using a
+semi-graphical application described in \cite{fv5028}. 
+Thanks to the \textit{silx}\cite{silx} project, which joins forces around data
+analysis for X-ray data, a new graphical user interface is under development for
+the calibration. 
+This new interface (Figure \ref{calib}) allows a simpler manual peak-picking,
+and still allows automatic ring extraction, fitting of the geometry and export
+of the regrouped data. 
+This calibration tool exports the result as a \textsc{poni}-file and can
+save the list of control points used  for the fitting of the geometry as
+\textsc{npt}-file
+
+This new graphical user interface, while still under development, is already
+available in the development branch of pyFAI and will be distributed in the
+final version of pyFAI v0.14 to be release mid-2017.
+
+\section{Calibration of a detector on a goniometer}
+
+The calibration of the detector position on a fixed goniometer position can be
+performed with pyFAI as long as the calibrant chosen leaves at least two ring on
+the image and that five control-points can be extracted from one ring and
+one point on the second ring. 
+Of course, more points provides a better fit but this limit may be an issue
+when dealing with small area detectors, some of them being as small as 80x120 pixels.
+
+\subsection{Translation of geometry}
+
+If the difficulty is not in the calibration, it is  rather in the variety of
+goniometers and translation tables which may be controled by one or muliple
+motors.
+The goniometer implementation in pyFAI accepts an arbitrary number of degrees of
+freedom for the goniometer which may be named (must be named for more than one
+degree of freedom). 
+Let ($motor_1$, $motor_2$, \ldots, $motor_n$) be those motors. 
+
+The work of calibrating the detecor's arm is the to define a set of parameter
+(of arbitrary size: $param_1$, $parma_2$, \ldots, $param_m$), the functions
+which transforms them into the 6-parameters needed by pyFAI and the values
+of the parameters such as for any position of the setup, this returns us a
+proper geometry.
+
+This can be expressed as:
+$$
+dist, poni_1, poni_2, rot_1, rot_2, rot_3 = \Re(param_1, parma_2, \ldots,
+param_m, motor_1, motor_2, \ldots, motor_n) 
+$$
+
+The 6 poni-parameters are then used to calculate the $2\theta$
+position of the peak positions which are compared to the expected $2\theta$
+values calculated from the calibrant d-spacing and the wavelength. 
+The sum of the square of those differences is used to minimize the parameter set
+using the scipy.optimize.minimize function\cite{scipy}.
+
+This translation function contains hence the motor names, the parmeter names and
+the six functions, one for each of the six parameters used in pyFAI. 
+
+From a computer engineering perspective, it should also be serializable to 
+disk to allow its restoration from a file without having to re-perform
+the calibration. 
+To adress this constrain, the NumExpr software package \cite{numexpr} was
+used, allowing the user to provide mathematical formula as text with an
+arbitrary number of degrees of freedom for the goniometer and as many parameters
+as needed.
+The definition of this function is simply the instanciation of the
+pyFAI.goniomater.GeometryTranslation class, with a list of motor names,
+parameter names and a set of six formula. 
+This may appear complicated and is best explained by example.
+
+\subsection{A simple example: the translation table}
+
+At ESRF, protein crystallography beamlines use large detectors (typically
+Pilatus 6M from Dectris) placed on a translation stage which allows to collect
+the data at the optimal distance: shorter detector distance for high-q and small
+inter-reticular distances or longer distances for best spot separation.
+
+PyFAI has the ``MX-calibrate'' tool available for calibrate many images taken at
+various distances but this can be addressed as a goniometer setup: 
+
+\begin{verbatim}
+from pyFAI.goniometer import GeometryTranslation
+gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale", 
+                                        "poni1", "poni2", "rot1","rot2"],
+                         dist_expr="pos * dist_scale + dist_offset", 
+                         poni1_expr="poni1",
+                         poni2_expr="poni2", 
+                         rot1_expr="rot1", 
+                         rot2_expr="rot2", 
+                         rot3_expr="0.0")
+\end{verbatim}
+ 
+In this example we define a 6-parameter set, most of them being exactly the same
+as the one of pyFAI: $poni1$, $poni2$, $rot1$ and $rot2$. $rot3$ is forced to
+zero while the distance is defined an afine function of the motor position.  
+If no motor names are not provided, pyFAI assumes there is only one motor
+called $pos$.
+
+  
+\subsection{A more realistic example: a single axis goniometer}
+
+\section{Conclusion}
+
+TODO
+
+\bibliographystyle{iucr}
+\bibliography{biblio}
+\appendix
+\section{Use of the pyFAI.goniometer for calibrating the goniometer and
+integrating}
+ 
 \ack{Acknowledgements}
 
 We would like to thank all ESRF beamline teams for supporting the
 pyFAI development, and especially the two CRG beamlines BM02 (D2AM) and BM20
 (ROBL) which provided beamtime and test-data to allow debuging the goniometer
 optimization tool.
-We would also like to thank the French CNRS for financing the IR-drx project in
-2015 and 2016 which acted as a catalizer on the goniometer refinement,
+We would also like to thank the French CNRS for financing the IR-DRX project
+in 2015 and 2016 which acted as a catalyzer on the goniometer refinement,
 and the other participants to the project, especially Serge Cohen from the
 Ipanema institute, the DiffAbs beamline and Frédéric-Emmanuel Picca from
-Synchrotron-Soleil.
+Synchrotron Soleil.
 In the instrumentation division (ISDD) we would like to thank V. A. Solé,  head
-of data analysis unit and leader of the silx project for his support.
+of data analysis unit and leader of the \textit{silx} project, and all our
+colleagues from the silx project: Thomas Vincent, Henri Payno and Pierre Knobel.
 
 \end{document}
