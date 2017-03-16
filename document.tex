@@ -5,156 +5,50 @@
 % Version 1.2 (11 December 2002)
 %------------------------------------------------------------------------------
 
-\documentclass{iucr}              % DO NOT DELETE THIS LINE
-
-                   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
                    \def\href#1{\relax}\let\foo\caption
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% To generate hyperlinked PDF, change the \documentclass line
-% to say \documentclass[pdf]{iucr} and process with pdflatex
 \ifPDF
   \RequirePackage{hyperref}
   \PassOptionsToPackage{pdftex,bookmarksopen,bookmarksnumbered}{hyperref}
   \voffset=-0.5in
 \fi
 \let\caption\foo
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%------------------------------------------------------------------------------
-% Information about the type of paper
-%------------------------------------------------------------------------------
-     \paperprodcode{a000000}      % Replace with production code if known
-     \paperref{xx9999}            % Replace xx9999 with reference code if known
-     \papertype{IU}               % Indicate type of article
-                                  %   FA - research papers (full article)
-                                  %   SC - short communications
-                                  %   FC - fast communications
-                                  %   LA - lead article
-                                  %   TR - topical review
-                                  %   XL - crystallization papers
-                                  % (Following categories rarely in LaTeX)
-                                  %   AA - abstracts
-                                  %   AD - addenda and errata
-                                  %   AI - inorganic compounds
-                                  %   AM - metal-organic compounds
-                                  %   AO - organic compounds
-                                  %   BC - books received
-                                  %   BR - book reviews
-                                  %   BI - biography
-                                  %   CA - cif applications
-                                  %   CD - crystal data
-                                  %   CE - current events
-                                  %   CI - inorganic compounds
-                                  %   CL - calendar of events
-                                  %   CM - metal-organic compounds
-                                  %   CN - cryocrystallography papers
-                                  %   CO - organic compounds
-                                  %   CP - computer programs
-                                  %   CR - crystallographers
-                                  %   CS - scientific comment
-                                  %   ED - editorial
-                                  %   EI - inorganic compounds
-                                  %   EM - metal-organic compounds
-                                  %   EO - organic compounds
-                                  %   FI - inorganic compounds
-                                  %   FM - metal-organic compounds
-                                  %   FO - organic compounds
-                                  %   IP - issue preface
-                                  %   IU - iucr
-                                  %   LE - letters to the editor
-                                  %   LN - laboratory notes
-                                  %   ME - forthcoming meetings/short courses
-                                  %   MR - meeting reports
-                                  %   NN - notes and news
-                                  %   NP - new commercial products
-                                  %   OB - obituaries
-                                  %   PA - computer program abstracts
-                                  %   RI - reference information
-                                  %   SG - structural genomics papers
-                                  %   SI - short format inorganic compounds
-                                  %   SM - short format metal-organic compounds
-                                  %   SO - short format organic compounds
-                                  %   SP - short structural papers
-                                  %   SR - software reviews
-                                  %   TE - teaching and education
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 
-     \paperlang{english}          % Can be english, french, german or russian
-%------------------------------------------------------------------------------
-% Information about journal to which submitted
-%------------------------------------------------------------------------------
-     %\journalcode{A}             % Indicate the journal to which submitted
-                                  %   A - Acta Crystallographica Section A
-                                  %   B - Acta Crystallographica Section B
-                                  %   C - Acta Crystallographica Section C
-                                  %   D - Acta Crystallographica Section D
-                                  %   J - Journal of Applied Crystallography
-                                  %   S - Journal of Synchrotron Radiation
-     %-------------------------------------------------------------------------
-     % The following entries will be changed as required by editorial staff
-     %-------------------------------------------------------------------------
-     \journalyr{2017}
-     %\journaliss{1}
-     %\journalvol{57}
-     %\journalfirstpage{1}
-     %\journallastpage{11}
-     \journalreceived{\relax}
-     \journalaccepted{\relax}
-     \journalonline{\relax}
+ \paperprodcode{a000000}      % Replace with production code if known
+ \paperref{xx9999}            % Replace xx9999 with reference code if known
+ \papertype{IU}               % Indicate type of article
+ \paperlang{english}          % Can be english, french, german or russian
+ \journalcode{J}             % Indicate the journal to which submitted
+ \journalyr{2017}
+ \journalreceived{\relax}
+ \journalaccepted{\relax}
+ \journalonline{\relax}
 
 \begin{document}                  % DO NOT DELETE THIS LINE
-
-     %-------------------------------------------------------------------------
-     % The introductory (header) part of the paper
-     %-------------------------------------------------------------------------
-
-     % The title of the paper. Use \shorttitle to indicate an abbreviated title
-     % for use in running heads (you will need to uncomment it).
 
 \title{Calibration of the experimetal setup in pyFAI with a goniometer
 mounted detector}
 \shorttitle{Using pyFAI with a goniometer}
 
-     % Authors' names and addresses. Use \cauthor for the main (contact) author.
-     % Use \author for all other authors. Use \aff for authors' affiliations.
-     % Use lower-case letters in square brackets to link authors to their
-     % affiliations; if there is only one affiliation address, remove the [a].
-
-     \author[a]{V.}{Valls}
-     \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
-     
-     
-     %\aufn{On leave from Institute
-     %of Advanced Research, Albany, Ruritania.}
-
-     \aff[a]{ESRF \city{Grenoble}, \country{France}}
-     %\aff[b]{3 Watery Way, \city{Full Fathom} 5, \country{Atlantis}}
-
-     % Use \shortauthor to indicate an abbreviated author list for use in
-     % running heads (you will need to uncomment it).
-     \shortauthor{Valls & Kieffer}
-
-%\shortauthor{Kieffer et al.}
-
-     % Use \vita if required to give biographical details (for authors of
-     % invited review papers only). Uncomment it.
+ \author[a]{V.}{Valls}
+ \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
+ 
+ 
+ \aff[a]{ESRF, The European Synchrotron, CS40220, 38043 \city{Grenoble}
+ Cedex 9, \country{France}}
+ \shortauthor{Valls and Kieffer}
 
 
-     % Keywords (required for Journal of Synchrotron Radiation only)
-     % Use the \keyword macro for each word or phrase, e.g.
-     % \keyword{X-ray diffraction}\keyword{muscle}
-
-\keyword{powder diffraction}
-\keyword{goniomater}
+\keyword{Powder diffraction}
+\keyword{translation table}
+\keyword{goniometer}
 \keyword{geometry calibration}
 
 
-     % PDB and NDB reference codes for structures referenced in the article and
-     % deposited with the Protein Data Bank and Nucleic Acids Database (Acta
-     % Crystallographica Section D). Repeat for each separate structuree.g.
-     % \PDBref[dethiobiotin synthetase]{1byi} \NDBref[d(G$_4$CGC$_4$)]{ad0002}
-
-%\PDBreference[optional name]{refcode}
-%\NDBreference[optional name]{refcode}
 
 \maketitle                        % DO NOT DELETE THIS LINE
 
@@ -170,24 +64,17 @@ TODO
 \end{abstract}
 
 
-     %-------------------------------------------------------------------------
-     % The main body of the paper
-     %-------------------------------------------------------------------------
-     % Now enter the text of the document in multiple \section's, \subsection's
-     % and \subsubsection's as required.
-
-
 \section{Introduction}
 
 Area detectors mounted on goniometer arms are commonly available for
 powder-diffraction data acquisition in lab-source diffractometer (for example
 Rigaku HyPix-3000).
 %The larger number of pixels trades-of the resolution for speed.
-On the oposite, moving detector setups are rarely used at synchrotrons for
+On the opposite, moving detector setups are rarely used at synchrotrons for
 the data acquisition itself, even if most of the detectors are mounted on a
 moving table.
 So at large facilities like synchrotons, larger detectors are 
-prefered and kept fix during the whole acquisition, often to ease the
+preferred and kept fix during the whole acquisition, often to ease the
 data-reduction step.
 The fixed position setup combined with the speed of modern detectors allows
 easily the acquisition in kinetic mode for following chemical reaction or other
@@ -198,24 +85,26 @@ Nevertheless high-Q acquisition is needed for Pair-wise Distribution Function
 able to cover the Q-range with one single frame.
 When speed is not a critical parameter, such experiment could be done with a
 smaller detector mounted on a moving arm which is moved during the
-acquisition; this setup being already available on most diffraction beamlines.
+acquisition; this setup being already available on most diffraction beam-lines.
 
-This document presents first shortly the pyFAI library\cite{} then how to merge
-multiple diffraction images acquired at different positions with this
-library\cite{}. 
-Then it explains how to calibrate the absolute position of every single
-pixel in the detector when mounted on a goniometer (or of the translation table)
-as function of the parameter of the goniometer. 
+This document presents first shortly the pyFAI library \cite{fv5028} then how to
+merge multiple diffraction images acquired at different positions with this
+library \cite{PyFAI_PDJ}. 
+After recalling how calibration works in pyFAI, this document then 
+presents the new graphical user interface and how to
+calibrate the absolute position of every single pixel in the detector when
+mounted on a goniometer (or of the translation table) as function of the  motor
+positions of the goniometer (assuming there are coupled with encoders). 
 
 \section{The fast azimuthal integration library}
 
-PyFAI is a Python library used to tranform 2D diffraction images into 1D powder
-diffraction pattern using rebinning of the pixel position to polar coordinates.
+PyFAI is a Python \cite{python} library used to transform 2D diffraction images into
+1D powder diffraction pattern using re-binning of the pixel position to polar coordinates.
 It provides in addition tools to calibrate the detector position, i.e. determine
 where it is located in space from the conics drawn by the Debye-Scherrer cones
 intersected by the detector (ellipses when the detector is planar and slightly
 inclined). This document describes the processing implemented in pyFAI
-v0.14 which is to be published in 2017/still under development.
+v0.14 which is to be published in fall 2017 and still under development.
 
 Azimuthal integration is performed in two steps, the first is a pixel-wise
 transformation corresponding the image correction:
@@ -223,20 +112,20 @@ $$
 I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \times
 \Omega \times P \times A } $$
 where $I_{raw}$ is the raw detector signal, $I_{dark}$ is the dark current
-image (may be also the background image for certain experiments), $F$ referes to
+image (may be also the background image for certain experiments), $F$ refers to
 the flat-field correction, $\Omega$ to the solid angle of the given pixel, $P$
-referes to polarization correction and $A$ referes to detector efficiency due
+refers to polarization correction and $A$ refers to detector efficiency due
 to in volume absorption due to parallax effects.
 
-For azimuthal integration the numerator of this formula, herafter refered as
-\textit{signal}, is separeted from the denominator which is refered as
+For azimuthal integration the numerator of this formula, her-after referred as
+\textit{signal}, is separated from the denominator which is referred as
 \textit{normalization}.
 
-The rebinning of the data is performed using an histogram of the position ($q$
+The re-binning of the data is performed using an histogram of the position ($q$
 or $2\theta$ values) weighted by the \textit{signal}.
 This gives the sum of all signals withing a ring.
 A second histogram of the positions is calculated, weighted by the
-\textit{normalization} this time, which gives the sum of all normalizations
+\textit{normalization} this time, which gives the sum of all normalization
 values.
 
 The average signal over a ring is then simply the ratio of the two histograms.
@@ -255,17 +144,17 @@ case the parameter $c_i$ is 1 for pixels falling in the bin an 0 for all the
 others.
   
 Those multiple pixel splitting schemes have already been described in
-\cite{fv5028} and can be stored to accelerate the calculation of the
-histogram \cite{kieffer_ashiotis-proc-euroscipy-2014}.
+ \cite{fv5028} and can be stored to accelerate the calculation of the
+histogram  \cite{kieffer_ashiotis-proc-euroscipy-2014}.
 
 \section{Azimuthal integration of multiple frames taken at multiple geometries}
 
 The integration of multiple images taken at varying position has first been
-reported for pyFAI in \cite{PyFAI_PDJ}. 
+reported for pyFAI in  \cite{PyFAI_PDJ}. 
 The procedure is conceptually similar to the integration on a single image,
 except that the various histograms, all performed on the same grid, are summed
-together, signals from all imges on the numerator and normalizations from all
-image on the denominator.
+together, signals from all images on the numerator and normalization from all
+images on the denominator.
 
 $$
 <I>_{ring} = \frac{\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
@@ -296,13 +185,13 @@ with the detector plane.
 For non planar detectors detector (also supported by pyFAI) those ``rings'' can
 be any type of curve.
 
-The least squares refinement is performed on an internal paramter-set containing
-six  parameters (or seven with the wavelength), definined around the
+The least squares refinement is performed on an internal parameter-set
+containing six  parameters (or seven with the wavelength), defined around the
 concept of Point Of Normal Incidence (hereafter named \textsc{poni}) which is
-the orthongonal projection  of the sample position on the detector plan 
+the orthogonal projection  of the sample position on the detector plan 
 (or z=0 when the detector is non-planar and z varies from pixel to pixel).
 This \textsc{poni} differs from the beam-center used in programs like
-Fit2D\cite{fit2d} as the \textsc{poni} is always defined and often lies within
+Fit2D \cite{fit2d} as the \textsc{poni} is always defined and often lies within
 the detector's image, as the detector best works when facing the sample.
 
 So the parameters refined are the following:
@@ -311,25 +200,25 @@ So the parameters refined are the following:
   \textsc{poni}
   \item \textit{poni1} and \textit{poni2}: coordinate of the
   \textsc{poni} in meter within the detector plan (z=0) along the slow and fast
-  dimention of the detector image (usually the row number and the column
+  dimension of the detector image (usually the row number and the column
   number, i.e. ``y, x'').
   \item \textit{rot1}, \textit{rot2} and \textit{rot3} which correspond to the
   rotation, expressed in radians, of the detector placed at the proper
   distance of the sample, along the 3 axis of the laboratory. The detector is
-  first rotated around the verical axis (rot1), then around the horizontal axis
-  (rot2) and finally around the incomming beam (rot3). 
+  first rotated around the vertical axis (rot1), then around the horizontal axis
+  (rot2) and finally around the incoming beam (rot3). 
   \textsc{poni}
 \end{itemize}
 
-This parameter set allows the description of any detector position in space.
-The drawback is that some parameterd are correlated: 
+This parameter-set allows the description of any detector position in space.
+The drawback is that some parameters are correlated: 
 \begin{itemize}
-  \item \textit{dist-wavelenght}: reducing the wavelength is equivalent to
+  \item \textit{dist-wavelength}: reducing the wavelength is equivalent to
   increase the distance unless the diffraction angle $2\theta$ is actually
-  large. It is adviced to fix one of the the two unless the data are good
+  large. It is advised to fix one of the the two unless the data are good
   quality and the angles are large.
   \item \textit{rot1-poni2} and \textit{rot2-poni1} as a small rotation can be
-  interepreted as a larger translation. Fixing one decreases the uncertainty of
+  interpreted as a larger translation. Fixing one decreases the uncertainty of
   the other by 2 orders of magnitude.
 \end{itemize}
 
@@ -348,43 +237,56 @@ object, ready to perform azimuthal integration.
 \subsection{Graphical user interface}
 
 The calibration used to be performed using a
-semi-graphical application described in \cite{fv5028}. 
-Thanks to the \textit{silx}\cite{silx} project, which joins forces around data
+semi-graphical application described in  \cite{fv5028}. 
+Thanks to the \textit{silx} \cite{silx} project, which joins forces around data
 analysis for X-ray data, a new graphical user interface is under development for
-the calibration. 
-This new interface (Figure \ref{calib}) allows a simpler manual peak-picking,
+the calibration (Figure \ref{gui}). 
+This new interface allows a simpler manual peak-picking,
 and still allows automatic ring extraction, fitting of the geometry and export
 of the regrouped data. 
 This calibration tool exports the result as a \textsc{poni}-file and can
 save the list of control points used  for the fitting of the geometry as
 \textsc{npt}-file
 
+\begin{figure}
+\label{gui}
+\begin{center}
+\includegraphics[width=9cm]{images/calibration-3-peak-picking.pdf}
+\caption{Graphical user interface developed in PyQt5 for calibrating
+static detector positions in SAXS and WAXS geometry.}
+\end{center}
+\end{figure}
+
+
 This new graphical user interface, while still under development, is already
 available in the development branch of pyFAI and will be distributed in the
 final version of pyFAI v0.14 to be release mid-2017.
 
-\section{Calibration of a detector on a goniometer}
+\section{Calibration of a detector on a moving stage}
 
 The calibration of the detector position on a fixed goniometer position can be
-performed with pyFAI as long as the calibrant chosen leaves at least two ring on
-the image and that five control-points can be extracted from one ring and
-one point on the second ring. 
+performed with pyFAI as long as the calibrant chosen leaves at least two rings
+on the image and that five control-points can be extracted from one ring and
+at least one point on the second ring. 
 Of course, more points provides a better fit but this limit may be an issue
-when dealing with small area detectors, some of them being as small as 80x120 pixels.
+when dealing when very small area detectors are used (the ImXPad S10 is as
+small as 80x120 pixels and it is still useable).
 
 \subsection{Translation of geometry}
 
 If the difficulty is not in the calibration, it is  rather in the variety of
-goniometers and translation tables which may be controled by one or muliple
+goniometers and translation tables which may be controlled by one or multiple
 motors.
-The goniometer implementation in pyFAI accepts an arbitrary number of degrees of
-freedom for the goniometer which may be named (must be named for more than one
-degree of freedom). 
+Those motors are usually coupled with encoder, such as the actual position of
+the motors is known precisely.
+The goniometer implementation in pyFAI accepts an
+arbitrary number of degrees of freedom for the goniometer which may be named 
+(must be named for more than one degree of freedom). 
 Let ($motor_1$, $motor_2$, \ldots, $motor_n$) be those motors. 
 
-The work of calibrating the detecor's arm is the to define a set of parameter
+The work of calibrating the detector's arm is the to define a set of parameter
 (of arbitrary size: $param_1$, $parma_2$, \ldots, $param_m$), the functions
-which transforms them into the 6-parameters needed by pyFAI and the values
+$\Re$ which transforms them into the 6-parameters needed by pyFAI and the values
 of the parameters such as for any position of the setup, this returns us a
 proper geometry.
 
@@ -394,30 +296,30 @@ dist, poni_1, poni_2, rot_1, rot_2, rot_3 = \Re(param_1, parma_2, \ldots,
 param_m, motor_1, motor_2, \ldots, motor_n) 
 $$
 
-The 6 poni-parameters are then used to calculate the $2\theta$
+The 6 \textsc{poni} parameters are then used to calculate the $2\theta$
 position of the peak positions which are compared to the expected $2\theta$
 values calculated from the calibrant d-spacing and the wavelength. 
 The sum of the square of those differences is used to minimize the parameter set
-using the scipy.optimize.minimize function\cite{scipy}.
+using the scipy.optimize.minimize function \cite{scipy}.
 
-This translation function contains hence the motor names, the parmeter names and
-the six functions, one for each of the six parameters used in pyFAI. 
+This translation function contains hence the motor names, the parameters names
+and the six functions, one for each of the six parameters used in pyFAI. 
 
 From a computer engineering perspective, it should also be serializable to 
-disk to allow its restoration from a file without having to re-perform
-the calibration. 
-To adress this constrain, the NumExpr software package \cite{numexpr} was
+disk (in JSON format) to allow its restoration from a file without having to
+re-perform the calibration. 
+To address this constrain, the NumExpr software package  \cite{numexpr} was
 used, allowing the user to provide mathematical formula as text with an
 arbitrary number of degrees of freedom for the goniometer and as many parameters
 as needed.
 The definition of this function is simply the instanciation of the
-pyFAI.goniomater.GeometryTranslation class, with a list of motor names,
-parameter names and a set of six formula. 
+\textit{pyFAI.goniomater.GeometryTranslation} class, with a list of motor names,
+parameter names and a set of six formula, one for each of the six parameters. 
 This may appear complicated and is best explained by example.
 
 \subsection{A simple example: the translation table}
 
-At ESRF, protein crystallography beamlines use large detectors (typically
+At ESRF, protein crystallography beam-lines use large pixel-detectors (typically
 Pilatus 6M from Dectris) placed on a translation stage which allows to collect
 the data at the optimal distance: shorter detector distance for high-q and small
 inter-reticular distances or longer distances for best spot separation.
@@ -439,10 +341,19 @@ gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale",
  
 In this example we define a 6-parameter set, most of them being exactly the same
 as the one of pyFAI: $poni1$, $poni2$, $rot1$ and $rot2$. $rot3$ is forced to
-zero while the distance is defined an afine function of the motor position.  
+zero while the distance is defined a linar function of the motor position.
 If no motor names are not provided, pyFAI assumes there is only one motor
 called $pos$.
 
+The Jupyter notebook \cite{ipython} in supplementary materials 1 presents the
+usage of this translation function together with the translation table
+refinement. This example shows the \textsc{poni} is moving on the detector
+plane by one milimeter per meter horizontally and four vertically.
+This ``large'' verical deviation has been confirmed by the beamline staff and
+is related to last focussing miror.
+Once everything is fitted, the quality of the geometry obtained is perfectly
+suited for powder diffraction experiment and the resolution is of the order of
+one pixel for any detector position.
   
 \subsection{A more realistic example: a single axis goniometer}
 
@@ -452,18 +363,17 @@ TODO
 
 \bibliographystyle{iucr}
 \bibliography{biblio}
-\appendix
-\section{Use of the pyFAI.goniometer for calibrating the goniometer and
-integrating}
  
 \ack{Acknowledgements}
 
-We would like to thank all ESRF beamline teams for supporting the
-pyFAI development, and especially the two CRG beamlines BM02 (D2AM) and BM20
-(ROBL) which provided beamtime and test-data to allow debuging the goniometer
-optimization tool.
+We would like to thank all ESRF beam-line teams for supporting the
+pyFAI development, and especially David Flot from the MX-group who provided the
+data of the translation table and the two CRG beamlines BM02 (D2AM) and BM20
+(ROBL) for the goniometer data. 
+They gracefully provided beamtime and test-data to allow debuging this 
+goniometer optimization tool.
 We would also like to thank the French CNRS for financing the IR-DRX project
-in 2015 and 2016 which acted as a catalyzer on the goniometer refinement,
+in 2015 and 2016 which acted as a catalyser on the goniometer refinement,
 and the other participants to the project, especially Serge Cohen from the
 Ipanema institute, the DiffAbs beamline and Frédéric-Emmanuel Picca from
 Synchrotron Soleil.
