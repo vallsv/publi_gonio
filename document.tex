@@ -270,7 +270,7 @@ on the image and that five control-points can be extracted from one ring and
 at least one point on the second ring. 
 Of course, more points provides a better fit but this limit may be an issue
 when dealing when very small area detectors are used (the ImXPad S10 is as
-small as 80x120 pixels and it is still useable).
+small as 80x120 pixels and it is still usable).
 
 \subsection{Translation of geometry}
 
@@ -312,7 +312,7 @@ To address this constrain, the NumExpr software package  \cite{numexpr} was
 used, allowing the user to provide mathematical formula as text with an
 arbitrary number of degrees of freedom for the goniometer and as many parameters
 as needed.
-The definition of this function is simply the instanciation of the
+The definition of this function is simply the instantiation of the
 \textit{pyFAI.goniomater.GeometryTranslation} class, with a list of motor names,
 parameter names and a set of six formula, one for each of the six parameters. 
 This may appear complicated and is best explained by example.
@@ -347,15 +347,76 @@ called $pos$.
 
 The Jupyter notebook \cite{ipython} in supplementary materials 1 presents the
 usage of this translation function together with the translation table
-refinement. This example shows the \textsc{poni} is moving on the detector
-plane by one milimeter per meter horizontally and four vertically.
-This ``large'' verical deviation has been confirmed by the beamline staff and
-is related to last focussing miror.
+refinement. 
+Initially this set of data has been calibrated using the ``MX-clibrate'' tool
+which extracts automatically the control points from images taken at ESRF-MX
+beam-lines from the metadata written in the header of images, so a good set
+of control point has been available prior to the processing described. 
+The translation table has been calibrated a first time with all control points
+and this \textit{translation function} subsequently, all images have been
+integrated azimuthally (Figure \ref{id29}, blue curve). 
+The image is a zoom on the two first peaks which looks ``doubled'' indicating a
+poor modeling of the geometry.
+
+\begin{figure}
+\label{id29}
+\begin{center}
+\includegraphics[width=9cm]{images/TranslationTable.png}
+\caption{Powder diffraction profile obtained from seven images acquired
+at various distances from 15 to 45 centimeters combined using a model with one
+(distance) or 3 degrees of freedom (distance and detector center)}
+\end{center}
+\end{figure}
+
+
+ 
+A second \textit{translation function} has been defined, allowing in addition a
+linear dependency of the \textsc{poni} position with the detector distance and
+the translation table model has been re-fitted (Figure \ref{id29}, orange
+curve).
+The peaks are much sharper, and the residual error is about $5\times$ smaller.
+The residual error being the average over all control points of the deviation of
+the $2\theta$ angle from theoretical value in radians, squared.
+
+This example shows the \textsc{poni} is moving on the detector
+plane by one millimeter per meter horizontally and four vertically.
+This ``large'' vertical deviation has been confirmed by the beam-line staff and
+is related to last focusing mirror, just before the sample, making the beam no
+more horizontal.
 Once everything is fitted, the quality of the geometry obtained is perfectly
 suited for powder diffraction experiment and the resolution is of the order of
 one pixel for any detector position.
   
 \subsection{A more realistic example: a single axis goniometer}
+
+Probably the main application of this work is to place a limited size detector
+on a goniometer $2-\theta$ arm, which is described now.
+In this second example, available as supplementary material file XXX, a single
+Pilatus module (100k) is mounted on the arm which is moved from 5 to 65 degrees per half
+degree step. 
+So one hundreed and twenty one images of LaB6 calibrant has been acquired on the
+ROBL beam-line (ESRF BM20, German CRG beam-line).
+Due to the small size of the detector (487x197 pixels),
+some of the images have no ring at all, most have one ring and only few images
+have 2 rings.
+The first images with two rings correspond to the rings of of the second group
+of LaB6 and lay around angle of 30 to 35 degrees.
+Three images, at 31.5, 33 and 35.5 degrees have been manually calibrated using
+the pyFAI-calib tool.
+This manual calibration is rather unstable due to the small size of the
+detector. 
+The rotation of the detector has been fixed to have consitency in the 3
+calibration.
+
+
+\section{Outlook}
+
+This goniometer desct
+* libhkl
+
+* Issue with gaps in detectors
+
+* small pixel size pixel detector
 
 \section{Conclusion}
 
@@ -370,10 +431,10 @@ We would like to thank all ESRF beam-line teams for supporting the
 pyFAI development, and especially David Flot from the MX-group who provided the
 data of the translation table and the two CRG beamlines BM02 (D2AM) and BM20
 (ROBL) for the goniometer data. 
-They gracefully provided beamtime and test-data to allow debuging this 
+They gracefully provided beam-time and test-data to allow debugging this 
 goniometer optimization tool.
 We would also like to thank the French CNRS for financing the IR-DRX project
-in 2015 and 2016 which acted as a catalyser on the goniometer refinement,
+in 2015 and 2016 which acted as a catalyzer on the goniometer refinement,
 and the other participants to the project, especially Serge Cohen from the
 Ipanema institute, the DiffAbs beamline and Frédéric-Emmanuel Picca from
 Synchrotron Soleil.
