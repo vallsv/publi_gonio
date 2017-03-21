@@ -30,8 +30,8 @@
 
 \begin{document}                  % DO NOT DELETE THIS LINE
 
-\title{Calibration of the experimetal setup in pyFAI with a goniometer
-mounted detector}
+\title{Calibration of experimetal setups with {pyFAI}: still detector or
+moving detector}
 \shorttitle{Using pyFAI with a goniometer}
 
  \author[a]{V.}{Valls}
@@ -53,14 +53,27 @@ mounted detector}
 \maketitle                        % DO NOT DELETE THIS LINE
 
 \begin{synopsis}
-Explain how to obtain a powder diffraction pattern from
-many images images taken with a 2D X-Ray detector mounted on a moving arm
-(goniometer) and how to define precisely the position of the detector on the
-moving arm from Debye-Scherrer ring of a reference compound.
+New tools to calibrate different types of scattering experiments : still
+detectors or moving detectors.
 \end{synopsis}
 
 \begin{abstract}
-TODO
+
+According to an internal survey performed among the beam-line scientists at
+the European Synchrotron (ESRF) in 2016, the factor limiting the users'
+productivity at diffraction beamlines is the calibration of the experimental
+setup before the access to the raw data for their reduction. 
+This issue is curently worked-around by providing to the users the proper
+geometry or even the reduced data, but this prevent the
+re-processing in home institutes and also the re-interpretation of data which
+is needed as part of the open-data initiative.
+
+This contribution presents a couple of new calibration tools: 
+a new graphical user interface for calibrating the detector position for a 
+diffraction experiment performed with a fixed large area detector and a library
+to be used in \textit{Jupyter notebook} for calibrating the move of the
+detector on a gonimeter arm (or any other moving table) for perfoming
+diffraction experiements with a moving detector.
 \end{abstract}
 
 
@@ -72,20 +85,35 @@ Rigaku HyPix-3000).
 %The larger number of pixels trades-of the resolution for speed.
 On the opposite, moving detector setups are rarely used at synchrotrons for
 the data acquisition itself, even if most of the detectors are mounted on a
-moving table.
+moving table or on a goniometer. 
+One counter example may be \cite{Gao:kc5032} where the beamline is equiped with
+a moving stip-detector (not an area detector).
+
 So at large facilities like synchrotons, larger detectors are 
 preferred and kept fix during the whole acquisition, often to ease the
 data-reduction step.
 The fixed position setup combined with the speed of modern detectors allows
 easily the acquisition in kinetic mode for following chemical reaction or other
-physical processes.
+physical processes \cite{id15, id31}.
+Even with fixed geometries, the determination of the detector's position is
+still an issue for a majority of users, according to a survey conducted among 
+the beam-lines scientists of the European Synchrotron (internal survey in 2016). 
+Hence a new grephical user interface has been developped for pyFAI, focusing
+on the user's experience to give them autonomy in data analysis, once back to the
+home institutes.
 
-Nevertheless high-Q acquisition is needed for Pair-wise Distribution Function
-(PDF) analysis which requires even larger detectors and higher energies to be
-able to cover the Q-range with one single frame.
-When speed is not a critical parameter, such experiment could be done with a
-smaller detector mounted on a moving arm which is moved during the
-acquisition; this setup being already available on most diffraction beam-lines.
+High-Q diffraction signal acquisition is needed \cite{Chupas:wf5000} for
+Pair-wise Distribution Function (PDF) analysis which requires very large
+detectors and higher energies to be able to cover the Q-range with one single frame.
+When speed is not a critical parameter, such experiment could be performed
+with smaller detectors mounted on a moving arm, and moved in front of
+the sample during the acquisition. 
+This setup is indeed already available on most diffraction beam-lines as
+detectors are often mounted either on a translation table or on a
+goniometer. 
+The new pyFAI module for dealing with goniomaters and their calibration is
+presented in this contribution, with a couple of \textit{Jupyter Notebooks}
+\cite{ipython} proposed as suplementary materials.
 
 This document presents first shortly the pyFAI library \cite{fv5028} then how to
 merge multiple diffraction images acquired at different positions with this
@@ -96,7 +124,7 @@ calibrate the absolute position of every single pixel in the detector when
 mounted on a goniometer (or of the translation table) as function of the  motor
 positions of the goniometer (assuming there are coupled with encoders). 
 
-\section{The fast azimuthal integration library}
+\section{The Python Fast Azimuthal Integration library (PyFAI)}
 
 PyFAI is a Python \cite{python} library used to transform 2D diffraction images into
 1D powder diffraction pattern using re-binning of the pixel position to polar coordinates.
@@ -408,19 +436,45 @@ detector.
 The rotation of the detector has been fixed to have consistency in the 3
 calibration.
 
+TODO
 
 \section{Outlook}
 
-This goniometer desct
-* libhkl
+This goniometer description can be adapted to many type of simple goniometer.
+The \textit{TranslationFunction} class presented in the notebook may be extended
+in the future to use the libhkl\cite{picca} which contains already many
+diffractometers' geometries with their multiplication matrices. 
+This is already possible but it won't allow the saving to and restoration from
+file. 
 
-* Issue with gaps in detectors
+By moving the detector in front of the sample, one can fill up the
+gaps which exists in Pilatus detectors. Those gaps are known to be responsible for glitches
+when acquiring PDF data with high energy photons due to the
+polarization of the synchrotron beam, causing large anisotropy in the
+diffracted signal.
 
-* small pixel size pixel detector
+Different generations of pixel detectctors have seen their pixel size
+shrink:
+from 172µm for the Pilatus, 130µm for ImXpad, 75µm for the Eiger and 55µm for
+Medipix-based chips \ldots, and probably less for future detectors. 
+As the resolution of the powder diffraction diagram obtained is limited by the
+pixel size (and the distance of the detector), this shrinkage of pixel-size
+leads naturally to better powder diffraction patterns. 
+Unfortunatelly, to keep the surface of the detector contant, one would need
+to increase the number of pixels by the square of this value, and the associated
+infrastructure for read-out and data-transfer. 
+By moving the detector in front of the sample, this limitation can partially be
+removed.
 
 \section{Conclusion}
 
-TODO
+The new graphical user interface for pyFAI has been developped to ease the
+calibration of the experimental setup with fixed detector. 
+On those fixed position have been described, they can be fitted togeather to
+detemine the detector position at any position of the goniometer. 
+By acquiring multiple images a variaous positions, images can be
+integrated togeather to provide a powder diffraction pattern of
+quality equivalent to the one acquired with a much larger detector. 
 
 \bibliographystyle{iucr}
 \bibliography{biblio}
