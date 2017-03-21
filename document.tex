@@ -4,8 +4,8 @@
 % Copyright 1999-2003 International Union of Crystallography
 % Version 1.2 (11 December 2002)
 %------------------------------------------------------------------------------
-
-\documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
+%
+\documentclass[preprint, pdf]{iucr}              % DO NOT DELETE THIS LINE
                    \def\href#1{\relax}\let\foo\caption
 \ifPDF
   \RequirePackage{hyperref}
@@ -17,6 +17,7 @@
 \usepackage{graphicx}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+%\usepackage{eps2pdf}
 
  \paperprodcode{a000000}      % Replace with production code if known
  \paperref{xx9999}            % Replace xx9999 with reference code if known
@@ -264,11 +265,31 @@ object, ready to perform azimuthal integration.
 
 \subsection{Graphical user interface}
 
-The calibration used to be performed using a
-semi-graphical application described in  \cite{fv5028}. 
-Thanks to the \textit{silx} \cite{silx} project, which joins forces around data
-analysis for X-ray data, a new graphical user interface is under development for
-the calibration (Figure \ref{gui}). 
+A semi-graphical calibration tool has been available as part of pyFAI
+\cite{fv5028} since the origin of the project but this tool was considered too
+hard to use by the users (while well accepted among the beamline staff).
+Following the survey performed among the beam-line scientists of the European
+Synchrotron, a new fully graphical user interface was developped, on top of 
+the PyQt5 library \cite{pyqt} with specific focus on the ease of use for the
+first time users.
+The calibration of the experimental setup based on Debye-Scherrer rings images 
+occues in five steps:
+\begin{itemize}
+  \item Settings: select wavelength, calibrant and detector (Figure
+  \ref{calib_1}),
+  \item Mask: a tool to draw a mask on top of the image (Figure
+  \ref{calib_2}),
+  \item Peak-picking: select ring and assign them to ring-numbers (Figure
+  \ref{calib_3}),
+  \item Geometry fitting: refinement of calibration (Figure
+  \ref{calib_4}), 
+  \item Integration: provides 1D and 2D integration of the image (Figure
+  \ref{calib_5}). 
+\end{itemize}
+
+Thanks to the \textit{silx} \cite{silx} project, which joins
+forces around data analysis for X-ray data, this new graphical user interface
+already from masking tools and HDF5 browsing widgets.
 This new interface allows a simpler manual peak-picking,
 and still allows automatic ring extraction, fitting of the geometry and export
 of the regrouped data. 
@@ -277,11 +298,38 @@ save the list of control points used  for the fitting of the geometry as
 \textsc{npt}-file
 
 \begin{figure}
-\label{gui}
+\label{calib_1}
 \begin{center}
-\includegraphics[width=9cm]{images/calibration-3-peak-picking.pdf}
-\caption{Graphical user interface developed in PyQt5 for calibrating
-static detector positions in SAXS and WAXS geometry.}
+\includegraphics[width=9cm]{images/calibration-1-settings.png}
+\caption{Setting up of the energy, calibrant and detector.}
+\end{center}
+\end{figure}
+\begin{figure}
+\label{calib_2}
+\begin{center}
+\includegraphics[width=9cm]{images/calibration-2-mask.png}
+\caption{Integrated mask drawing tool}
+\end{center}
+\end{figure}
+\begin{figure}
+\label{calib_3}
+\begin{center}
+\includegraphics[width=9cm]{images/calibration-3-peak-picking.png}
+\caption{Tool for peak-picking and ring assignment}
+\end{center}
+\end{figure}
+\begin{figure}
+\label{calib_4}
+\begin{center}
+\includegraphics[width=9cm]{images/calibration-4-fitting.png}
+\caption{Selection of the parameters to fit.}
+\end{center}
+\end{figure}
+\begin{figure}
+\label{calib_5}
+\begin{center}
+\includegraphics[width=9cm]{images/calibration-5-integration-result.png}
+\caption{Integration interface to validate the geometry.}
 \end{center}
 \end{figure}
 
@@ -320,12 +368,12 @@ proper geometry.
 
 This can be expressed as:
 $$
-dist, poni_1, poni_2, rot_1, rot_2, rot_3 = \Re(param_1, parma_2, \ldots,
+dist, poni_1, poni_2, rot_1, rot_2, rot_3 = \Re(param_1, param_2, \ldots,
 param_m, motor_1, motor_2, \ldots, motor_n) 
 $$
 
-The 6 \textsc{poni} parameters are then used to calculate the $2\theta$
-position of the peak positions which are compared to the expected $2\theta$
+The 6 parameters contained in the \textsc{poni}-file  are then used to calculate
+the $2\theta$ position of the peak positions which are compared to the expected $2\theta$
 values calculated from the calibrant d-spacing and the wavelength. 
 The sum of the square of those differences is used to minimize the parameter set
 using the scipy.optimize.minimize function \cite{scipy}.
@@ -334,15 +382,15 @@ This translation function contains hence the motor names, the parameters names
 and the six functions, one for each of the six parameters used in pyFAI. 
 
 From a computer engineering perspective, it should also be serializable to 
-disk (in JSON format) to allow its restoration from a file without having to
-re-perform the calibration. 
-To address this constrain, the NumExpr software package  \cite{numexpr} was
+disk (in \textsc{json}-format) to allow its restoration from a file without
+having to re-perform the calibration. 
+To address this constrain, the NumExpr software package \cite{numexpr} was
 used, allowing the user to provide mathematical formula as text with an
 arbitrary number of degrees of freedom for the goniometer and as many parameters
 as needed.
 The definition of this function is simply the instantiation of the
-\textit{pyFAI.goniomater.GeometryTranslation} class, with a list of motor names,
-parameter names and a set of six formula, one for each of the six parameters. 
+\textit{pyFAI.goniometer.GeometryTranslation} class, with a list of motor
+names, parameter names and a set of six formula, one for each of the six parameters. 
 This may appear complicated and is best explained by example.
 
 \subsection{A simple example: the translation table}
@@ -368,8 +416,8 @@ gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale",
 \end{verbatim}
  
 In this example we define a 6-parameter set, most of them being exactly the same
-as the one of pyFAI: $poni1$, $poni2$, $rot1$ and $rot2$. $rot3$ is forced to
-zero while the distance is defined a linar function of the motor position.
+as the one of pyFAI: $poni_1$, $poni_2$, $rot-1$ and $rot_2$. $rot_3$ is forced
+to zero while the distance is defined a linear function of the motor position.
 If no motor names are not provided, pyFAI assumes there is only one motor
 called $pos$.
 
@@ -455,8 +503,9 @@ diffracted signal.
 
 Different generations of pixel detectctors have seen their pixel size
 shrink:
-from 172µm for the Pilatus, 130µm for ImXpad, 75µm for the Eiger and 55µm for
-Medipix-based chips \ldots, and probably less for future detectors. 
+from $\172 mu m$ for the Pilatus, $130 \mu m$ for ImXpad, $75 \mu m$ for the
+Eiger and $55 \mu m$ for Medipix-based chips \ldots, and probably less for
+future detectors.
 As the resolution of the powder diffraction diagram obtained is limited by the
 pixel size (and the distance of the detector), this shrinkage of pixel-size
 leads naturally to better powder diffraction patterns. 
