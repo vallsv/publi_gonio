@@ -73,7 +73,7 @@ This contribution presents a couple of new calibration tools:
 a new graphical user interface for calibrating the detector position for a 
 diffraction experiment performed with a fixed large area detector and a library
 to be used in \textit{Jupyter notebooks} for calibrating the move of the
-detector on a gonimeter arm (or any other moving table) for performing
+detector on a goniometer arm (or any other moving table) for performing
 diffraction experiments with a moving detector.
 \end{abstract}
 
@@ -133,10 +133,10 @@ It provides in addition tools to calibrate the detector position, i.e. determine
 where it is located in space from the conics drawn by the Debye-Scherrer cones
 intersected by the detector (ellipses when the detector is planar and slightly
 inclined). This document describes the processing implemented in pyFAI
-v0.14 which is to be published in fall 2017 and still under development.
+v0.14 which is to be released in fall 2017 and still under development.
 
 Azimuthal integration is performed in two steps, the first is a pixel-wise
-transformation corresponding the image correction:
+transformation corresponding to the image correction:
 $$
 I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \times
 \Omega \times P \times A } $$
@@ -152,7 +152,7 @@ For azimuthal integration the numerator of this formula, her-after referred as
 
 The re-binning of the data is performed using an histogram of the position ($q$
 or $2\theta$ values) weighted by the \textit{signal}.
-This gives the sum of all signals withing a ring.
+This gives the sum of all signals within a ring.
 A second histogram of the positions is calculated, weighted by the
 \textit{normalization} this time, which gives the sum of all normalization
 values.
@@ -229,13 +229,13 @@ So the parameters refined are the following:
   \textsc{poni}
   \item $poni_1$ and $poni_2$: coordinate of the
   \textsc{poni} in meter within the detector plan (z=0) along the slow and fast
-  dimension of the detector image (usually the row number and the column
-  number, i.e. ``y, x'').
+  dimension of the detector image (1 and 2 usually refer to the row axis and
+  the column axis, i.e. ``y, x'').
   \item $rot1$, $rot2$ and $rot3$ which correspond to the
   rotation, expressed in radians, of the detector placed at the proper
   distance of the sample, along the 3 axis of the laboratory. The detector is
   first rotated around the vertical axis (rot1), then around the horizontal axis
-  (rot2) and finally around the incoming beam (rot3). 
+  (rot2) and finally around the incoming beam (rot3).
   \textsc{poni}
 \end{itemize}
 
@@ -244,7 +244,7 @@ The drawback is that some parameters are correlated:
 \begin{itemize}
   \item \textit{dist-wavelength}: reducing the wavelength is equivalent to
   increase the distance unless the diffraction angle $2\theta$ is actually
-  large. It is advised to fix one of the the two unless the data are good
+  large. It is advised to fix one of the two unless the data are good
   quality and the angles are large.
   \item $rot_1$-$poni_2$ and $rot_2$-$poni_1$ as a small rotation can be
   interpreted as a larger translation. Fixing one decreases the uncertainty of
@@ -260,7 +260,7 @@ main anisotropic contribution to the signal.
 
 The parameters of the calibration are saved in text-files with the ``.poni''
 extension and contain simply the six geometrical parameters, the detector
-definition and the wavelength. 
+definition and the wavelength.
 This file can subsequently be loaded into an \textit{azimuthal integrator}
 object, ready to perform azimuthal integration.
 
@@ -268,7 +268,8 @@ object, ready to perform azimuthal integration.
 
 A semi-graphical calibration tool has been available as part of pyFAI
 \cite{fv5028} since the origin of the project but this tool was considered too
-hard to use by the users (while well accepted among the beamline staff).
+difficult to be used by the users (while well accepted among the beamline
+staff).
 Following the survey performed among the beam-line scientists of the European
 Synchrotron, a new fully graphical user interface was developed, on top of 
 the PyQt5 library \cite{pyqt} with specific focus on the ease of use for the
@@ -276,7 +277,7 @@ first time users.
 The calibration of the experimental setup based on Debye-Scherrer rings images 
 occurs in five steps:
 \begin{itemize}
-  \item Settings: select wavelength, calibrant and detector (Figure
+  \item Experimental settings: select wavelength, calibrant and detector (Figure
   \ref{calib_1}),
   \item Mask: a tool to draw a mask on top of the image (Figure
   \ref{calib_2}),
@@ -361,7 +362,7 @@ arbitrary number of degrees of freedom for the goniometer which may be named
 (must be named for more than one degree of freedom). 
 Let $motors = (motor_1, motor_2, \ldots, motor_n)$ be those motors. 
 
-The work of calibrating the detector's arm is the to define a set of parameter
+Calibrating the detector's arm consist in defining a set of parameters
 (of arbitrary size: $params = param_1, parma_2, \ldots, param_m)$, the
 functions $\Re$ which transforms them into the 6-parameters needed by pyFAI and 
 the values of the parameters such as for any position of the setup, this returns
@@ -416,9 +417,9 @@ gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale",
                          rot3_expr="0.0")
 \end{verbatim}
  
-In this example we define a 6-parameter set, most of them being exactly the same
-as the one of pyFAI: $poni_1$, $poni_2$, $rot_1$ and $rot_2$. $rot_3$ is forced
-to zero while the distance is defined a linear function of the motor position.
+In this example we define a 6 parameters for the goniometer geometry, most of
+them being exactly the same as the one of pyFAI: $poni_1$, $poni_2$, $rot_1$
+and $rot_2$. $rot_3$ is forced to zero while the distance is defined a linear function of the motor position.
 If no motor names are not provided, pyFAI assumes there is only one motor
 called $pos$.
 
@@ -465,7 +466,7 @@ suited for powder diffraction experiment for any detector position.
 \subsection{A more realistic example: a single axis goniometer}
 
 Probably the main application of this work is to place a limited size detector
-on a goniometer $2-\theta$ arm, which is described now.
+on a goniometer $2\theta$ arm, which is described now.
 In this second example, available as supplementary material file
 ``Multi120Pilatus100k'', a single Pilatus module (100k) is mounted on the
 arm which is moved from 5 to 65 degrees per half degree step.
@@ -474,7 +475,7 @@ the ROBL beam-line (ESRF BM20, German CRG beam-line).
 Due to the small size of the detector (487x197 pixels),
 some of the images have no ring at all, most have one ring and only few images
 have 2 rings.
-The first images with two rings correspond to the rings of of the second group
+The first images with two rings correspond to the rings of the second group
 of LaB$_6$ and lay above angles of 30 degrees.
 Four images, taken at 31.5, 33 and 35 and 35.5 degrees have been manually
 calibrated using the pyFAI-calib tool presented in the previous section.
@@ -537,7 +538,7 @@ of magnitude faster than previously, making the beamline scientist pretty happy.
 
 This goniometer description can be adapted to many type of simple goniometer.
 The \textit{TranslationFunction} class presented in the notebook may be extended
-in the future to use the libhkl\cite{picca} which contains already many
+in the future to use libhkl\cite{picca} which contains already many
 diffractometers' geometries with their rotation matrices. 
 This is already possible but it won't allow the saving to and restoration from
 file. 
