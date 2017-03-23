@@ -60,19 +60,12 @@ detectors or moving detectors.
 
 \begin{abstract}
 
-According to an internal survey performed among the beam-line scientists at
-the European Synchrotron (ESRF) in 2016, the factor limiting the users'
-productivity at diffraction beam-lines is the calibration of the experimental
-setup before the access to the raw data for their reduction. 
-This issue is currently worked-around by providing to users the proper
-geometry or even the reduced data, but this prevent the
-re-processing at home institutes and also the re-interpretation of data which
-is needed as part of the open-data initiative.
 
-This contribution presents a couple of new calibration tools: 
+This contribution presents a couple of new calibration tools in the pyFAI suite
+for processing scattering experiments acquired with area detectors:
 a new graphical user interface for calibrating the detector position for a 
-diffraction experiment performed with a fixed large area detector and a library
-to be used in \textit{Jupyter notebooks} for calibrating the move of the
+scattering experiment performed with a fixed large area detector and
+a library to be used in \textit{Jupyter notebooks} for calibrating the move of the
 detector on a goniometer arm (or any other moving table) for performing
 diffraction experiments with a moving detector.
 \end{abstract}
@@ -80,28 +73,45 @@ diffraction experiments with a moving detector.
 
 \section{Introduction}
 
-Area detectors mounted on goniometer arms are commonly available for
-powder-diffraction data acquisition in lab-source diffractometer (for example
-Rigaku HyPix-3000).
-%The larger number of pixels trades-of the resolution for speed.
-On the opposite, moving detector setups are rarely used at synchrotrons for
-the data acquisition itself, even if most of the detectors are mounted on a
-moving table or on a goniometer. 
-One counter example may be \cite{Gao:kc5032} where the beamline is equipped with
-a moving stip-detector (Mythen from Dectris, which is not an area detector).
+According to an internal survey performed among the beam-line scientists at
+the European Synchrotron (ESRF) in 2016, the factor limiting the users'
+productivity at diffraction beam-lines is the calibration of the experimental
+setup before the access to the raw data for their reduction. 
+This issue on calibration is currently worked-around by providing to users the
+proper geometry or even the reduced data, but this prevent the
+re-processing at home institutes and also the re-interpretation of data which
+is needed as part of the open-data initiative.
 
-So at X-ray facilities like synchrotons, larger detectors are 
-preferred and kept fix during the whole acquisition, often to ease the
-data-reduction step.
+At X-ray facilities like synchrotons, large area detectors are 
+preferred for gathering a maximum number of photons in
+scattering experiment (powder diffraction, small angle
+scattering, \ldots).
+% The still position of the detector during the acquisition, makes also
+%easier the data-reduction step.
 The fixed position setup combined with the speed of modern detectors (up
 to kHz) allows easily the acquisition in kinetic mode for following chemical
 reaction or other physical processes \cite{id15, id31}.
 Even with fixed geometries, the determination of the detector's position is
-still an issue for a majority of users, according to a survey conducted among 
-the beam-lines scientists of the European Synchrotron (internal survey in 2016). 
+still an issue for a majority of users. 
 Hence a new graphical user interface has been developed for pyFAI, focusing
 on the user's experience to give them autonomy in data analysis, once back to the
 home institutes.
+
+
+On the oposite to large facilities, lab-source diffractometer are commonly
+available with (small) area detectors mounted on goniometer arms for
+powder-diffraction (for example Rigaku HyPix-3000 detector).
+%The larger number of pixels trades-of the resolution for speed.
+While detectors in synchrotron are often monted on goniometer or translation
+tables, those degrees of freedom are rarely used for the data-acquisition.  
+One counter example may be \cite{Gao:kc5032} where the beamline is equipped with
+a moving stip-detector (Mythen from Dectris, which is not an area detector).
+
+%On the opposite, moving detector setups are rarely
+%used at synchrotrons for the data acquisition itself, even if most of the
+% detectors are mounted on a moving table or on a goniometer. 
+
+
 
 High-Q diffraction signal acquisition is needed \cite{Chupas:wf5000} for
 Pair-wise Distribution Function (PDF) analysis which requires very large
@@ -166,7 +176,7 @@ $$
 
 In this equation, the parameter $c_i$ correspond to the fraction of area of a
 pixel falling into a specific bin. 
-As pyFAI provides multiple pixel splitting schemes, the differ only by their
+As pyFAI provides multiple pixel splitting schemes, they differ only by their
 $c_i$ coefficients. 
 Simple weighted histograms corresponds actually to no splitting at all; in this
 case the parameter $c_i$ is 1 for pixels falling in the bin an 0 for all the
@@ -231,12 +241,11 @@ So the parameters refined are the following:
   \textsc{poni} in meter within the detector plan (z=0) along the slow and fast
   dimension of the detector image (1 and 2 usually refer to the row axis and
   the column axis, i.e. ``y, x'').
-  \item $rot1$, $rot2$ and $rot3$ which correspond to the
+  \item $rot_1$, $rot_2$ and $rot_3$ which correspond to the
   rotation, expressed in radians, of the detector placed at the proper
   distance of the sample, along the 3 axis of the laboratory. The detector is
-  first rotated around the vertical axis (rot1), then around the horizontal axis
-  (rot2) and finally around the incoming beam (rot3).
-  \textsc{poni}
+  first rotated around the vertical axis ($rot_1$), then around the horizontal
+  axis ($rot_2$) and finally around the incoming beam ($rot_3$).
 \end{itemize}
 
 This parameter-set allows the description of any detector position in space.
@@ -245,7 +254,7 @@ The drawback is that some parameters are correlated:
   \item \textit{dist-wavelength}: reducing the wavelength is equivalent to
   increase the distance unless the diffraction angle $2\theta$ is actually
   large. It is advised to fix one of the two unless the data are good
-  quality and the angles are large.
+  quality and the scattering angles are large (>30°).
   \item $rot_1$-$poni_2$ and $rot_2$-$poni_1$ as a small rotation can be
   interpreted as a larger translation. Fixing one decreases the uncertainty of
   the other by 2 orders of magnitude.
