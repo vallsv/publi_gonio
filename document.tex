@@ -226,12 +226,21 @@ be any type of curve.
 
 The least squares refinement is performed on an internal parameter-set
 containing six  parameters (or seven with the wavelength), defined around the
-concept of Point Of Normal Incidence (hereafter named \textsc{poni}) which is
-the orthogonal projection  of the sample position on the detector plan 
+concept of Point Of Normal Incidence (Figure \ref{poni} hereafter named
+\textsc{poni}) which is the orthogonal projection  of the sample position on the detector plan 
 (or z=0 when the detector is non-planar and z varies from pixel to pixel).
 This \textsc{poni} differs from the beam-center used in programs like
 Fit2D \cite{fit2d} as the \textsc{poni} is always defined and often lies within
 the detector's image, as the detector best works when facing the sample.
+
+\begin{figure}
+\label{poni}
+\begin{center}
+\includegraphics[width=9cm]{images/PONI.png}
+\caption{Geometry used internally in pyFAI.}
+\end{center}
+\end{figure}
+
 
 So the parameters refined are the following:
 \begin{itemize}
@@ -400,7 +409,7 @@ as needed.
 The definition of this function is simply the instantiation of the
 \textit{pyFAI.goniometer.GeometryTranslation} class, with a list of motor
 names, parameter names and a set of six formula, one for each of the six parameters. 
-This may appear complicated and is best explained by the two comming examples.
+This may appear complicated and is best explained by the two coming examples.
 
 \subsection{A simple example: the translation table}
 
@@ -411,13 +420,13 @@ inter-reticular distances or longer distances for best spot separation.
 
 PyFAI has the ``MX-calibrate'' tool available for calibrating many images taken
 at various distances but this can be addressed as a goniometer setup where the
-sample-detector distance can be modeled as a simple linar function of the table
-prosition:
+sample-detector distance can be modeled as a simple linear function of the table
+position:
 
 \begin{verbatim}
 from pyFAI.goniometer import GeometryTranslation
 gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale", 
-                                        "poni1", "poni2", "rot1","rot2"],
+                                        "poni1", "poni2", "rot1", "rot2"],
                          dist_expr="pos * dist_scale + dist_offset", 
                          poni1_expr="poni1",
                          poni2_expr="poni2", 
@@ -428,12 +437,14 @@ gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale",
  
 In this example we define a 6 parameters for the goniometer geometry, most of
 them being exactly the same as the one of pyFAI: $poni_1$, $poni_2$, $rot_1$
-and $rot_2$. $rot_3$ is forced to zero while the distance is defined a linear function of the motor position.
+and $rot_2$. $rot_3$ is forced to zero while the distance is defined a
+linear function of the motor position. 
+This makes actually six degrees of freedom  (\textit{dof}) to be refined.
 If no motor names are not provided, pyFAI assumes there is only one motor
 called $pos$.
 
 The Jupyter notebook \cite{ipython} in supplementary materials file
-``TTcalibration'' presents the usage of this translation function
+``TTcalibration'' presents the usage of this \textit{translation function} class
 together with the translation table refinement. 
 Initially this set of data has been calibrated using the ``MX-clibrate'' tool
 which extracts automatically the control points from images taken at ESRF-MX
@@ -460,9 +471,11 @@ position is combined using a model with one ($dist$) or 3 degrees of freedom
 A second \textit{translation function} has been defined, allowing in addition a
 linear dependency of the \textsc{poni} position with the translation
 table position, and everything was re-fitted (Figure \ref{id29}, orange curve).
-The peaks are much sharper, and the residual error is about $5\times$ smaller.
-The residual error being the average over all control points of the deviation of
-the $2\theta$ angle from theoretical value in radians, squared.
+The peaks are much sharper, and the cost function is about
+$5\times$ smaller.
+The cost function used is the average over all control points
+of the deviation of the $2\theta$ angle (in radians) from theoretical value,
+squared.
 
 This example shows the \textsc{poni} is moving on the detector
 plane by one millimeter per meter horizontally and four vertically.
@@ -475,35 +488,55 @@ suited for powder diffraction experiment for any detector position.
 \subsection{A more realistic example: a single axis goniometer}
 
 Probably the main application of this work is to place a limited size detector
-on a goniometer $2\theta$ arm, which is described now.
-In this second example, available as supplementary material file
-``Multi120Pilatus100k'', a single Pilatus module (100k) is mounted on the
-arm which is moved from 5 to 65 degrees per half degree step.
+on a goniometer $2\theta$ arm, which is described in this section. 
+This second example is also available as a \textit{Jupyter
+Notebook} in supplementary material file called ``Multi120Pilatus100k'', and
+the workflow used is depicted in Figure \ref{workflow}.
+This experiment has been performed using a single Pilatus module (100k)
+detector which is mounted on the moving $2\theta$ arm, varying 
+from 5 to 65 degrees per half degree step.
 So one hundred and twenty one images of LaB$_6$ calibrant has been acquired on
 the ROBL beam-line (ESRF BM20, German CRG beam-line).
 Due to the small size of the detector (487x197 pixels),
 some of the images have no ring at all, most have one ring and only few images
 have 2 rings.
+
+\begin{figure}
+\label{workflow}
+\begin{center}
+\includegraphics[width=9cm]{images/workflow.png}
+\caption{Workflow used to calibrate a set of 121 Pilatus 100k images one a
+moving $2\theta$ arm and detailed in the \textit{Jupyter Notebook} in
+supplementatry materials.}
+\end{center}
+\end{figure}
+
 The first images with two rings correspond to the rings of the second group
 of LaB$_6$ and lay above angles of 30 degrees.
 Four images, taken at 31.5, 33 and 35 and 35.5 degrees have been manually
-calibrated using the pyFAI-calib tool presented in the previous section.
-This manual calibration is rather unstable due to the small size of the
-detector. 
-The rotation of the detector ($rot_1=0$) has been fixed to have consistency in
-the four images.
+calibrated using the \textit{pyFAI-calib} tool presented in the previous
+section.
+This manual calibration is rather tedious and unstable due to the small size of
+the detector. 
+The rotation along axis 1 of the detector ($rot_1=0$) has been fixed to have
+consistency in the four images.
 
-An initial set of parameters with $rot_2$ equal to the goniometer angle is
-first converged, with some constrains and bounds (see supplementary materials).
-Then all other images have been added to the model, and control points were 
-automatically extracted from all images according to the inital model of
-geometry.
+An initial simple model with a set of parameters where $rot_2$ is equal to the
+goniometer angle has first been converged, with some constrains and
+bounds (see supplementary materials).
+In a second step, ten images of the vinicy of the first ones have been added to
+the model; their peak extracted according to the initial model and the model
+refined with the control points from ten images.
+Then all other images have been added to the model, and control
+points were automatically extracted from all images according to the
+previous model of geometry.
 After all constrains and bounds have been removed, the model was refined again
-and used to generate a \textit{MultiGeometry} object. 
+and used to generate a \textit{MultiGeometry} object, able to integrate many
+images together.
 This integrator was used to generate the pattern shown in Figure \ref{bm20}, in
 blue.
-The peak of the curve all appear at the right position but the first ones looks
-too small and too broad. 
+The peak of the curve all appear at the correct scattering angle but
+the first peak looks too small and too broad. 
 
 \begin{figure}
 \label{bm20}
@@ -511,17 +544,18 @@ too small and too broad.
 \includegraphics[width=9cm]{images/gonio.png}
 \caption{Powder diffraction pattern obtained from 121 images acquired
 at goniometer angles spaced from 5 to 65 degrees. On the right-hand size,
-close-up view on the first peak with a simple model (blue) or with an model
-where two parameters are function of the goniometer position.}
+close-up view on the first peak with a simple model (6 degrees of freedom,
+in blue) or with an model where two parameters are function of the goniometer
+position (7 degrees of freedom, in orange).}
 \end{center}
 \end{figure}
 
 
-This is confirmed by displaying the first ring, in the image taken with the
-goniometer at 10 degrees, in Figure\ref{bm20_10}. 
+This is broadening is confirmed by looking at the first ring's image, where the
+goniometer was at 10 degrees, in Figure\ref{bm20_10}.
 The expected position of the ring, in dashed red line, does not correspond
-with the ring in green. 
-The control points extracted are plotted in blue. 
+properly with the ring in yellow. The control points extracted are plotted in
+blue.
 
 \begin{figure}
 \label{bm20_10}
@@ -533,31 +567,34 @@ in dashed red line.}
 \end{center}
 \end{figure}
 
-Another model was suggested, allowing also the $rot_1$ to depend on the
+Another model was suggested, allowing also the $rot_1$ to depend linearly on the
 goniometer position. 
-After refinement, the residual error dropped by a factor two and the
-low angle peaks were sharpen (Figure \ref{bm20} curve in orange). 
+After refinement, the cost function dropped by a factor two and
+the low angle peaks were sharpen (Figure \ref{bm20} curve in orange). 
 
 This parameter set was saved and allowed a few compounds to been analyzed and
 compared to the same pattern recorded with a moving point detector. 
 The Signal/Noise ratio was both better with an acquisition times an order
-of magnitude faster than previously, making the beamline scientist pretty happy. 
+of magnitude faster than previously, making the beam-line scientist pretty
+happy.
 
 \section{Outlook}
 
-This goniometer description can be adapted to many type of simple goniometer.
+The goniometer description which is described in this work can be adapted to
+many type of simple goniometer.
 The \textit{TranslationFunction} class presented in the notebook may be extended
 in the future to use libhkl\cite{picca} which contains already many
 diffractometers' geometries with their rotation matrices. 
-This is already possible but it won't allow the saving to and restoration from
-file. 
+This is already possible but it do not yet allow the saving and
+restoration from file. 
 
 By moving the detector in front of the sample, one can fill up the
-gaps which exists in Pilatus detectors. 
+gaps which exists in pixel detectors like Pilatus. 
 Those gaps are known to be responsible for glitches
 when acquiring PDF data with high energy photons due to the
 polarization of the synchrotron beam, causing large anisotropy in the
-diffracted signal.
+diffracted signal. 
+A simple move of a couple of milimeter could be enough to solve this issue. 
 
 Different generations of pixel detectors have seen their pixel size
 shrink:
