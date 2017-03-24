@@ -64,7 +64,7 @@ detectors or moving detectors.
 This contribution presents a couple of new calibration tools in the pyFAI suite
 for processing scattering experiments acquired with area detectors:
 a new graphical user interface for calibrating the detector position for a 
-scattering experiment performed with a fixed large area detector and
+scattering experiment performed with a fixed, large area detector and
 a library to be used in \textit{Jupyter notebooks} for calibrating the move of the
 detector on a goniometer arm (or any other moving table) for performing
 diffraction experiments with a moving detector.
@@ -94,8 +94,8 @@ reaction or other physical processes \cite{id15, id31}.
 Even with fixed geometries, the determination of the detector's position is
 still an issue for a majority of users. 
 Hence a new graphical user interface has been developed for pyFAI, focusing
-on the user's experience to give them autonomy in data analysis, once back to the
-home institutes.
+on the user's experience to give them autonomy in data analysis, once back to
+their home institutes.
 
 
 On the oposite to large facilities, lab-source diffractometer are commonly
@@ -154,7 +154,7 @@ where $I_{raw}$ is the raw detector signal, $I_{dark}$ is the dark current
 image (may be also the background image for certain experiments), $F$ refers to
 the flat-field correction, $\Omega$ to the solid angle of the given pixel, $P$
 refers to polarization correction and $A$ refers to detector efficiency due
-to in volume absorption due to parallax effects.
+to in volume absorption related to parallax effects.
 
 For azimuthal integration the numerator of this formula, her-after referred as
 \textit{signal}, is separated from the denominator which is referred as
@@ -162,7 +162,7 @@ For azimuthal integration the numerator of this formula, her-after referred as
 
 The re-binning of the data is performed using an histogram of the position ($q$
 or $2\theta$ values) weighted by the \textit{signal}.
-This gives the sum of all signals within a ring.
+This gives the sum of all \textit{signals} within a ring.
 A second histogram of the positions is calculated, weighted by the
 \textit{normalization} this time, which gives the sum of all normalization
 values.
@@ -192,8 +192,8 @@ The integration of multiple images taken at varying position has first been
 reported for pyFAI in  \cite{PyFAI_PDJ}. 
 The procedure is conceptually similar to the integration on a single image,
 except that the various histograms, all performed on the same grid, are summed
-together, signals from all images on the numerator and normalization from all
-images on the denominator.
+together, \textit{signals} from all images on the numerator and
+\textit{normalizations} from all images on the denominator.
 
 $$
 <I>_{ring} = \frac{\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
@@ -226,9 +226,10 @@ be any type of curve.
 
 The least squares refinement is performed on an internal parameter-set
 containing six  parameters (or seven with the wavelength), defined around the
-concept of Point Of Normal Incidence (Figure \ref{poni} hereafter named
-\textsc{poni}) which is the orthogonal projection  of the sample position on the detector plan 
-(or z=0 when the detector is non-planar and z varies from pixel to pixel).
+concept of Point Of Normal Incidence (hereafter named
+\textsc{poni}, Figure \ref{poni}) which is the orthogonal projection  of the
+sample position on the detector plan (or z=0 when the detector is non-planar and
+z varies from pixel to pixel). 
 This \textsc{poni} differs from the beam-center used in programs like
 Fit2D \cite{fit2d} as the \textsc{poni} is always defined and often lies within
 the detector's image, as the detector best works when facing the sample.
@@ -263,7 +264,7 @@ The drawback is that some parameters are correlated:
   \item \textit{dist-wavelength}: reducing the wavelength is equivalent to
   increase the distance unless the diffraction angle $2\theta$ is actually
   large. It is advised to fix one of the two unless the data are good
-  quality and the scattering angles are large (>30°).
+  quality and the scattering angles are large ($>30^o$).
   \item $rot_1$-$poni_2$ and $rot_2$-$poni_1$ as a small rotation can be
   interpreted as a larger translation. Fixing one decreases the uncertainty of
   the other by 2 orders of magnitude.
@@ -365,7 +366,7 @@ performed with pyFAI as long as the calibrant chosen leaves at least two rings
 on the image and that five control-points can be extracted from one ring and
 at least one point on the second ring. 
 Of course, more points provides a better fit but this limit may be an issue
-when dealing when very small area detectors are used (the ImXPad S10 is as
+when dealing when very small area detectors are used (i.e. the ImXPad S10 is as
 small as 80x120 pixels and it is still usable).
 
 \subsection{Translation of geometry}
@@ -373,7 +374,7 @@ small as 80x120 pixels and it is still usable).
 If the difficulty is not in the calibration, it is  rather in the variety of
 goniometers and translation tables which may be controlled by one or multiple
 motors.
-Those motors are usually coupled with encoder, such as the actual position of
+Those motors are usually coupled with encoders, such as the actual position of
 the motors is known precisely.
 The goniometer implementation in pyFAI accepts an
 arbitrary number of degrees of freedom for the goniometer which may be named 
@@ -396,8 +397,8 @@ values calculated from the calibrant d-spacing and the wavelength.
 The sum of the square of those differences is used to minimize the parameter set
 using the \textit{scipy.optimize.minimize} function from SciPy \cite{scipy}.
 
-This translation function contains hence the motor names, the parameters names
-and the six functions, one for each of the six parameters used in pyFAI. 
+This \textit{translation function} contains hence the motor names, the
+parameters names and the six functions, one for each of the six parameters used in pyFAI. 
 
 From a computer engineering perspective, it should also be serializable to 
 disk (in \textsc{json}-format) to allow its restoration from a file without
@@ -443,7 +444,7 @@ This makes actually six degrees of freedom  (\textit{dof}) to be refined.
 If no motor names are not provided, pyFAI assumes there is only one motor
 called $pos$.
 
-The Jupyter notebook \cite{ipython} in supplementary materials file
+The Jupyter notebook \cite{ipython} in supplementary materials file called
 ``TTcalibration'' presents the usage of this \textit{translation function} class
 together with the translation table refinement. 
 Initially this set of data has been calibrated using the ``MX-clibrate'' tool
@@ -524,19 +525,19 @@ consistency in the four images.
 An initial simple model with a set of parameters where $rot_2$ is equal to the
 goniometer angle has first been converged, with some constrains and
 bounds (see supplementary materials).
-In a second step, ten images of the vinicy of the first ones have been added to
+In a second step, twenty images of the vinicy of the first ones have been added to
 the model; their peak extracted according to the initial model and the model
-refined with the control points from ten images.
+refined with the control points from twenty images.
 Then all other images have been added to the model, and control
 points were automatically extracted from all images according to the
 previous model of geometry.
 After all constrains and bounds have been removed, the model was refined again
 and used to generate a \textit{MultiGeometry} object, able to integrate many
 images together.
-This integrator was used to generate the pattern shown in Figure \ref{bm20}, in
-blue.
-The peak of the curve all appear at the correct scattering angle but
-the first peak looks too small and too broad. 
+After integration of all 121 images, one obtains the powder diffraction pattern
+shown in Figure \ref{bm20}, in blue.
+All peaks of the curve appear at the correct scattering angle but
+the first one looks too small and too broad. 
 
 \begin{figure}
 \label{bm20}
@@ -551,8 +552,8 @@ position (7 degrees of freedom, in orange).}
 \end{figure}
 
 
-This is broadening is confirmed by looking at the first ring's image, where the
-goniometer was at 10 degrees, in Figure\ref{bm20_10}.
+This broadening is confirmed by looking at the first ring's image, where the
+goniometer was at 10 degrees, in Figure \ref{bm20_10}.
 The expected position of the ring, in dashed red line, does not correspond
 properly with the ring in yellow. The control points extracted are plotted in
 blue.
@@ -563,7 +564,8 @@ blue.
 \includegraphics[width=9cm]{images/gonio_10.png}
 \caption{Diffraction image taken at 10 degree of the goniometer arm, with the
 control points in blue and the expected ring of the simple model ($rot2=f(pos)$)
-in dashed red line.}
+in dashed red line. This highlights the need for $rot_1$ to depend on the motor
+position.}
 \end{center}
 \end{figure}
 
@@ -575,8 +577,8 @@ the low angle peaks were sharpen (Figure \ref{bm20} curve in orange).
 This parameter set was saved and allowed a few compounds to been analyzed and
 compared to the same pattern recorded with a moving point detector. 
 The Signal/Noise ratio was both better with an acquisition times an order
-of magnitude faster than previously, making the beam-line scientist pretty
-happy.
+of magnitude faster than previously, openeing new perspectives for the ROBL
+beamline.
 
 \section{Outlook}
 
@@ -598,7 +600,7 @@ A simple move of a couple of milimeter could be enough to solve this issue.
 
 Different generations of pixel detectors have seen their pixel size
 shrink:
-from $\172 mu m$ for the Pilatus, $130 \mu m$ for ImXpad, $75 \mu m$ for the
+from $172 \mu m$ for the Pilatus, $130 \mu m$ for ImXpad, $75 \mu m$ for the
 Eiger and $55 \mu m$ for Medipix-based chips \ldots, and probably less for
 future detectors.
 As the resolution of the powder diffraction diagram obtained is limited by the
@@ -612,15 +614,14 @@ Moving the detector in front of the sample removes partially this limitation.
 \section{Conclusion}
 
 The new graphical user interface for pyFAI has been developed to ease the
-calibration of the experimental setup with fixed detector. 
+calibration of the experimental setup with fixed detector, especially for first
+time users.
 Once those fixed position have been described, they can be fitted together to
 determine the detector position at any goniometer position. 
 By acquiring multiple images a various positions, images can be
 integrated together to provide a high-Q powder diffraction pattern of
 quality equivalent to the one acquired with a much larger detector. 
 
-\bibliographystyle{iucr}
-\bibliography{biblio}
  
 \ack{Acknowledgements}
 
@@ -639,5 +640,9 @@ In the instrumentation division (ISDD) from ESRF  we would like to thank V. A.
 Solé, head of data analysis unit and leader of the \textit{silx} project, and all our
 colleagues from the silx project: Thomas Vincent, Henri Payno, Damien Naudet and
 Pierre Knobel.
+
+\bibliographystyle{iucr}
+\bibliography{biblio}
+
 
 \end{document}
