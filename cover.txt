@@ -1,0 +1,33 @@
+Dear Co-editor,
+
+We would like to submit you a manuscript about data analysis of powder diffraction 
+data acquired on synchrotron using area detector. This paper describes two new tools 
+for the calibration of the detector position in X-ray scattering experiments.
+First and foremost the new graphical user interface of pyFAI which aims at being 
+simple to start with for first-time users. Then a new tool based on Jupyter notebooks
+to be able to calibrate the position of a detector mounted on a goniometer arm.   
+This requires some know-how in Python programming but open doors for many 
+beam-lines with limited credits and only small detectors. The procedure has been
+validates with data from a couple of other beam-lines, in addition to the example 
+described in the manuscript (ESRF-ID28 & D2AM CRG beamline).   
+
+While pyFAI is an open source software, this very recent work is not yet part of 
+any release of the software. We would like to provide you (and the reviewers) with 
+the source of our work, if you wish to test or review our code.
+
+For the graphical user interface: 
+https://github.com/vallsv/pyFAI/tree/calibration-gui-proto
+For the goniometer calibration:
+https://github.com/kif/pyFAI/tree/541_peak-picker
+
+As this code in under review (mainly for cleaning-up), it shall be integrated in 
+the main branch of pyFAI by the time of publication (and the text adapted accordingly).
+
+As this manuscript contains quite a bit of programming, We would recommend you 
+some reviewer which are used to the Python programming. There are quite a few of 
+them in the Billinge group, for example Pavol Juhas is said to be a smart programmer.
+At Petra-III, the powder diffraction beam-line has also a number of scientists
+very fluent in Python. 
+If you or any reviewer are interested in the raw data, we made them available at 
+http://ftp.edna-site.org/pyFAI/gonio/   
+  
