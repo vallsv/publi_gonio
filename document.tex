@@ -143,7 +143,7 @@ It provides in addition tools to calibrate the detector position, i.e. determine
 where it is located in space from the conics drawn by the Debye-Scherrer cones
 intersected by the detector (ellipses when the detector is planar and slightly
 inclined). This document describes the processing implemented in pyFAI
-v0.14 which is to be released in fall 2017 and still under development.
+v0.14 which is to be released mid-2017 and still under development.
 
 Azimuthal integration is performed in two steps, the first is a pixel-wise
 transformation corresponding to the image correction:
@@ -153,8 +153,9 @@ I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \times
 where $I_{raw}$ is the raw detector signal, $I_{dark}$ is the dark current
 image (may be also the background image for certain experiments), $F$ refers to
 the flat-field correction, $\Omega$ to the solid angle of the given pixel, $P$
-refers to polarization correction and $A$ refers to detector efficiency due
-to in volume absorption related to parallax effects.
+refers to polarization correction and $A$ refers to detector apparant efficiency
+due to incidence photon angle (for integrating detectors, high energy photons
+with larger incident angle see longer sensor thickness).
 
 For azimuthal integration the numerator of this formula, her-after referred as
 \textit{signal}, is separated from the denominator which is referred as
@@ -221,7 +222,7 @@ the $2\theta$ angles.
 In this work we will call them ``rings'' even if, for planar detector,
 they are actually the conic intersections of the X-ray beam cones
 with the detector plane.
-For non planar detectors detector (also supported by pyFAI) those ``rings'' can
+For non planar detectors (also supported by pyFAI) those ``rings'' can
 be any type of curve.
 
 The least squares refinement is performed on an internal parameter-set
@@ -270,8 +271,9 @@ The drawback is that some parameters are correlated:
   the other by 2 orders of magnitude.
 \end{itemize}
 
-Moreover the $rot_3$ is never refined and stays at zero unless specified
-differently.  This can be used to simulate the rotation of the
+Due to the azimuthal symmetry of the Debye-Scherrer cones, the $rot_3$ parameter
+is never refined and stays at zero unless specified differently.  
+This can be used to simulate the rotation of the
 experimental setup azimuthally. 
 It has not effect in most cases, except for the
 polarization of the incident beam during the diffraction process, which is the
@@ -366,10 +368,10 @@ performed with pyFAI as long as the calibrant chosen leaves at least two rings
 on the image and that five control-points can be extracted from one ring and
 at least one point on the second ring. 
 Of course, more points provides a better fit but this limit may be an issue
-when dealing when very small area detectors are used (i.e. the ImXPad S10 is as
-small as 80x120 pixels and it is still usable).
+when dealing when very small area detectors are used (i.e. the ImXPAD S10 is
+as small as 80x120 pixels and it is still usable).
 
-\subsection{Translation of geometry}
+\subsection{Transformation of geometry}
 
 If the difficulty is not in the calibration, it is  rather in the variety of
 goniometers and translation tables which may be controlled by one or multiple
@@ -378,11 +380,11 @@ Those motors are usually coupled with encoders, such as the actual position of
 the motors is known precisely.
 The goniometer implementation in pyFAI accepts an
 arbitrary number of degrees of freedom for the goniometer which may be named 
-(must be named for more than one degree of freedom). 
+(must be named for more than one moving motor). 
 Let $motors = (motor_1, motor_2, \ldots, motor_n)$ be those motors. 
 
 Calibrating the detector's arm consist in defining a set of parameters
-(of arbitrary size: $params = param_1, parma_2, \ldots, param_m)$, the
+(of arbitrary size: $params = param_1, parma_2, \ldots, param_m$), the
 functions $\Re$ which transforms them into the 6 parameters needed by pyFAI and 
 the values of the parameters such as for any position of the setup, this returns
 us a proper geometry.
@@ -416,7 +418,7 @@ CostFunct = \frac{ \sum\limit_{i \in cp} {(\Delta 2\theta_i)^2}} {nb(cp)}
 $$
 
 
-This \textit{translation function} contains hence the motor names, the
+This \textit{tranformation function} contains hence the motor names, the
 parameters names with their associated values (after fitting), and the six
 functions, one for each of the six parameters used in \textit{pyFAI}.
 
@@ -429,8 +431,8 @@ arbitrary number of degrees of freedom for the goniometer and as many parameters
 as needed.
 
 The definition of this function is simply the instantiation of the
-\textit{pyFAI.goniometer.GeometryTranslation} class, with a list of motor
-names, parameter names and a set of six formula, one for each of the six parameters. 
+\textit{pyFAI.goniometer.GeometryTransformation} class, with a list of
+motor names, parameter names and a set of six formula, one for each of the six parameters. 
 This may appear complicated and is best explained by the two coming examples.
 
 \subsection{A simple example: the translation table}
@@ -446,16 +448,16 @@ sample-detector distance can be modeled as a simple linear function of the table
 position:
 
 \begin{verbatim}
-from pyFAI.goniometer import GeometryTranslation
-gt = GeometryTranslation(param_names = ["dist_offset", "dist_scale", 
+from pyFAI.goniometer import GeometryTransformation
+gt = GeometryTransformation(param_names = ["dist_offset", "dist_scale", 
                                         "poni1", "poni2", "rot1", "rot2"],
-                         pos_names = ["position"],
-                         dist_expr="position * dist_scale + dist_offset", 
-                         poni1_expr="poni1",
-                         poni2_expr="poni2", 
-                         rot1_expr="rot1", 
-                         rot2_expr="rot2", 
-                         rot3_expr="0.0")
+                            pos_names = ["position"],
+                            dist_expr="position * dist_scale + dist_offset", 
+                            poni1_expr="poni1",
+                            poni2_expr="poni2", 
+                            rot1_expr="rot1", 
+                            rot2_expr="rot2", 
+                            rot3_expr="0.0")
 \end{verbatim}
  
 In this example we chose to use 6 parameters for the goniometer
@@ -470,15 +472,15 @@ If no motor names are provided, a single motor  configuration (called $pos$)
 is assumed.
 
 The Jupyter notebook \cite{ipython} in supplementary materials file called
-``TTcalibration'' presents the usage of this \textit{translation function} class
-together with the translation table refinement. 
-Initially this set of data has been calibrated using the ``MX-clibrate'' tool
+``TTcalibration'' presents the usage of this \textit{transformation function}
+class together with the translation table refinement. 
+Initially this set of data has been calibrated using the ``MX-calibrate'' tool
 which extracts automatically the control points from images taken at ESRF-MX
 beam-lines from the metadata written in the header of images, so a good set
 of control point has been available prior to the processing described. 
 The translation table has been calibrated a first time with all control points
-and this \textit{translation function} subsequently, all images have been
-integrated azimuthally (Figure \ref{id29}, orange curve). 
+and this \textit{transformation function} subsequently, all images have been
+integrated azimuthally (Figure \ref{id29}, blue curve). 
 The image is a zoom on the two first peaks which looks ``doubled'' indicating a
 poor modeling of the geometry.
 
@@ -495,9 +497,9 @@ table position.}
 \end{figure}
 
  
-A second \textit{translation function} has been defined, allowing in addition a
-linear dependency of the \textsc{poni} position with the translation
-table position, and everything was re-fitted (Figure \ref{id29}, blue curve).
+Another \textit{transformation function} has been defined, allowing in
+addition a linear dependency of the \textsc{poni} position with the translation
+table position, and everything was re-fitted (Figure \ref{id29}, orange curve).
 The peaks are much sharper, and the cost function is about
 $5\times$ smaller.
 The cost function used is the average over all control points
@@ -522,6 +524,20 @@ the workflow used is depicted in Figure \ref{workflow}.
 This experiment has been performed using a single Pilatus module (100k)
 detector which is mounted on the moving $2\theta$ arm, varying 
 from 5 to 65 degrees per half degree step.
+The initial \textit{geometry transformation} has been defined as rot2
+\begin{verbatim}
+from pyFAI.goniometer import GeometryTransformation
+gt = GeometryTransformation(param_names = ["dist_offset", "dist_scale", 
+                                        "poni1", "poni2", "rot1", "rot2"],
+                            pos_names = ["position"],
+                            dist_expr="position * dist_scale + dist_offset", 
+                            poni1_expr="poni1",
+                            poni2_expr="poni2", 
+                            rot1_expr="rot1", 
+                            rot2_expr="rot2", 
+                            rot3_expr="0.0")
+\end{verbatim}
+ 
 So one hundred and twenty one images of LaB$_6$ calibrant has been acquired on
 the ROBL beam-line (ESRF BM20, German CRG beam-line).
 Due to the small size of the detector (487x197 pixels),
@@ -537,6 +553,8 @@ moving $2\theta$ arm and detailed in the \textit{Jupyter Notebook} in
 supplementary materials.}
 \end{center}
 \end{figure}
+
+ 
 
 The first images with two rings correspond to the rings of the second group
 of LaB$_6$ and lay above angles of 30 degrees.
@@ -610,14 +628,14 @@ beamline.
 
 The goniometer description which is described in this work can be adapted to
 many type of simple goniometer.
-The \textit{TranslationFunction} class presented in the notebook may be extended
+The \textit{TransformationFunction} class presented in the notebook may be extended
 in the future to use \textit{libhkl}\cite{picca} which contains already many
 diffractometer geometries with their associated rotation matrices. 
 This is already possible now but it do not yet allow the saving and
 restoration from file. 
 
 By moving the detector in front of the sample, one can fill up the
-gaps which exists in pixel detectors like Pilatus. 
+gaps which exists in pixel detectors.
 Those gaps are known to be responsible for glitches
 when acquiring PDF data with high energy photons due to the
 polarization of the synchrotron beam, causing large anisotropy in the
@@ -631,11 +649,12 @@ Eiger and $55 \mu m$ for Medipix-based chips \ldots, and probably less for
 future detectors.
 As the resolution of the powder diffraction diagram obtained is limited by the
 pixel size (and the distance of the detector), this shrinkage of pixel-size
-leads naturally to better powder diffraction patterns. 
+leads naturally to better resolved powder diffraction patterns. 
 Unfortunately, to keep the surface of the detector constant, one would need
 to multiply the number of pixels by the square of this value, and the
 associated infrastructure for read-out and data-transfer. 
-Moving the detector in front of the sample removes partially this limitation.
+Moving the detector in front of the sample offers a flexibility which
+partially removes this limitation.
 
 \section{Conclusion}
 
