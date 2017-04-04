@@ -403,14 +403,19 @@ Calibrating the goniometer consists in:
   and the goniometer parmaters into the six \textsc{poni}-parameters used by
   pyFAI,
   \item optimizing the parameter set of the goniometer (\textit{params}) so that
-  for any position of the motors, the detector position is properly
-  defined.
+  for any position of the motors, the detector position can be expressed as
+  a \textsc{poni}-parameters set.
 \end{itemize}
 
-This can be expressed as:
-$$
+This \textit{tranformation function} contains hence the motor names, the
+parameter names with their associated values (obtained by fitting), and returns
+the six individual parameters used in \textit{pyFAI}; it can be formally
+expressed as:
+
+\begin{equation}
 P_{pyFAI} = dist, poni_1, poni_2, rot_1, rot_2, rot_3 = \Re_{params}(motors)
-$$
+\end{equation}
+
 
 The six \textsc{poni}-parameters returned 
 %contained in the \textsc{poni}-file 
@@ -428,43 +433,41 @@ arcsin(\frac{\lambda}{2d})
 $$
 
 
-The average of the square of these differences is used as a cost function
-and optimises the \textit{params} using the \textit{scipy.optimize.minimize}
+The average of the squares of these differences is used as a cost function
+to optimise the \textit{params} using the \textit{scipy.optimize.minimize}
 function from SciPy \cite{scipy}.
 
 $$
 CostFunct = \frac{ \sum\limit_{i \in cp} {(\Delta 2\theta_i)^2}} {nb(cp)} 
 $$
 
-
-This \textit{tranformation function} contains hence the motor names, the
-parameters names with their associated values (after fitting), and the six
-functions, one for each of the six parameters used in \textit{pyFAI}.
-
-From a computer engineering perspective, it should also be serializable to 
-disk (in \textsc{json}-format) to allow its restoration from a file without
-having to re-perform the calibration. 
-To address this constrain, the NumExpr library \cite{numexpr} is
-used, allowing the user to provide mathematical formula as text with an
-arbitrary number of degrees of freedom for the goniometer and as many parameters
+From a computer engineering perspective, this \textit{transformation function}
+should also be serialisable to disk (actually in \textsc{json}-format) to allow
+its restoration from a file without having to re-perform the calibration. 
+To address this constraint, the \textit{NumExpr} library \cite{numexpr} is
+used, enabling the user to provide textual mathematical formulae with
+an arbitrary number of degrees of freedom for the goniometer and as many parameters
 as needed.
 
 The definition of this function is simply the instantiation of the
 \textit{pyFAI.goniometer.GeometryTransformation} class, with a list of
-motor names, parameter names and a set of six formula, one for each of the six parameters. 
-This may appear complicated and is best explained by the two coming examples.
+motor and parameter names as well as a set of six formulae, one for each of
+the \textsc{poni}-parameters.
+This may appear complicated and is best explained by the two following examples.
 
 \subsection{A simple example: the translation table}
 
-At ESRF, protein crystallography beam-lines use large pixel-detectors (typically
-Pilatus 6M from Dectris) placed on a translation stage which allows to collect
-the data at the optimal distance: shorter detector distance for high-$q$ and
-small inter-reticular distances or longer distances for best spot separation.
+At the  ESRF, the protein crystallography beam-lines use large pixel detectors
+(typically Pilatus 6M from Dectris) placed on a translation stage which allows
+collecting the data at the optimal distance: shorter sample-to-detector
+distances to explore the region for high-$q$ 
+or longer distances for better Bragg peak separation.
 
-PyFAI has the ``MX-calibrate'' tool available for calibrating many images taken
-at various distances but this can be addressed as a goniometer setup where the
-sample-detector distance can be modeled as a simple linear function of the table
-position:
+The ``MX-calibrate'' tool of PyFAI is available for calibrating many images
+taken at various distances.
+This can also be interpreted in terms of a goniometer setup (actually a
+translation table) where the sample-to-detector distance is modelled as a
+simple linear function of the translation table position:
 
 \begin{verbatim}
 from pyFAI.goniometer import GeometryTransformation
@@ -479,29 +482,30 @@ gt = GeometryTransformation(param_names = ["dist_offset", "dist_scale",
                             rot3_expr="0.0")
 \end{verbatim}
  
-In this example we chose to use 6 parameters for the goniometer
-geometry, most of them being exactly the same as the one of pyFAI: 
+In the example above, we chose to use six parameters for the goniometer
+geometry, most of them being exactly the same as those of pyFAI: 
 $poni_1$, $poni_2$, $rot_1$
 and $rot_2$. 
-$rot_3$ is forced to zero while the distance is defined a
+$rot_3$ is forced to zero while the distance is defined as a 
 linear function of the motor position. 
 This makes actually six degrees of freedom  (\textit{dof}) to be refined.
 Motor names should be declared as a list and assigned to \textit{pos names}. 
 If no motor names are provided, a single motor  configuration (called $pos$)
 is assumed.
 
-The Jupyter notebook \cite{ipython} in supplementary materials file called
-``TTcalibration'' presents the usage of this \textit{transformation function}
+The Jupyter notebook \cite{ipython} in a Supplementary Material  file called
+``TTcalibration'', presents the usage of the \textit{transformation function}
 class together with the translation table refinement. 
-Initially this set of data has been calibrated using the ``MX-calibrate'' tool
-which extracts automatically the control points from images taken at ESRF-MX
-beam-lines from the metadata written in the header of images, so a good set
-of control point has been available prior to the processing described. 
-The translation table has been calibrated a first time with all control points
-and this \textit{transformation function} subsequently, all images have been
-integrated azimuthally (Figure \ref{id29}, blue curve). 
-The image is a zoom on the two first peaks which looks ``doubled'' indicating a
-poor modeling of the geometry.
+Initially, this set of data is calibrated using the ``MX-calibrate'' tool
+that extracts automatically the control points from images taken at
+ESRF MX beam-lines from the metadata written in the image headers, 
+thus a set of control points is available prior to processing the data.
+The translation table is calibrated using all control points
+and this \textit{transformation function}.
+As a result, all images have been integrated azimuthally.
+The Figure \ref{id29} is a zoom on the two first Bragg peaks of CeO$_2$. 
+The blue curve correspond to this initial model refined; the two peaks look
+``doubled'' indicating a poor modeling of the geometry.
 
 \begin{figure}
 \label{id29}
@@ -516,22 +520,26 @@ table position.}
 \end{figure}
 
  
-Another \textit{transformation function} has been defined, allowing in
-addition a linear dependency of the \textsc{poni} position with the translation
-table position, and everything was re-fitted (Figure \ref{id29}, orange curve).
-The peaks are much sharper, and the cost function is about
-$5\times$ smaller.
-The cost function used is the average over all control points
-of the deviation of the $2\theta$ angle (in radians) from theoretical value,
-squared.
+Another \textit{transformation function} is defined, allowing in
+addition for a linear dependency of the \textsc{poni} position on the
+translation table position, and everything is re-fitted.
+The peaks of the orange curve in Figure \ref{id29} are much sharper, and the cost 
+function is about $5\times$ smaller.
 
-This example shows the \textsc{poni} is moving on the detector
-plane by one millimeter per meter horizontally and four vertically.
+%The cost function used is the average over all control points
+%of the deviation of the $2\theta$ angle (in radians) from theoretical value,
+%squared.
+
+This example shows that the \textsc{poni} is moving on the detector
+plane by one millimetre per meter (1\textperthousand) horizontally and four
+4 \textperthousand vertically.
 This ``large'' vertical deviation has been confirmed by the beam-line staff and
-is related to last focusing mirror, just before the sample, making the beam no
-more horizontal.
+is related to the focussing mirror placed just before the sample, causing the
+beam to be no more horizontal.
 Once everything is fitted, the quality of the geometry obtained is perfectly
-suited for powder diffraction experiment for any detector position.
+suited to powder diffraction experiments for any detector position. The
+$Notebook$ exposes in addition how to re-extract all control points, but
+without improving the fit. 
   
 \subsection{A more realistic example: a single axis goniometer}
 
