@@ -55,7 +55,7 @@ detector and moving detectors}
 
 \begin{synopsis}
 New tools to calibrate different types of scattering experiments : static
-detectors or moving detectors.
+and moving detectors.
 \end{synopsis}
 
 \begin{abstract}
@@ -90,7 +90,7 @@ scattering, \ldots).
 %easier the data-reduction step.
 Using a fixed position setup combined with the speed of modern detectors (up
 to a few kHz) the data acquisition in kinetic mode is easily performed to 
-follow chemical reactions or other physical processes \cite{id15, id31}.
+follow chemical reactions or other physical processes.
 Even with fixed geometries, determining the detector's position is
 still an issue for a majority of users. 
 Hence, a new graphical user interface has been developed for pyFAI, focusing
@@ -104,7 +104,7 @@ arms for powder diffraction (for example, the Rigaku HyPix-3000 detector),
 Whereas detectors at synchrotrons are often mounted on goniometer or
 translation tables, those degrees of freedom are rarely used for data
 acquisition.
-One counter-example is reported in \cite{Gao:kc5032}, where the beamline
+One counter-example is reported in \cite{Gao:kc5032}, where the beam-line
 is equipped with a moving strip-detector, the Mythen detector from Dectris,
 which is not an area detector.
 
@@ -141,14 +141,14 @@ there are coupled with encoders.
 
 PyFAI is a Python \cite{python} library used to transform 2D diffraction images into
 1D powder diffraction patterns by re-binning the pixel positions in polar
-coordinates where the radial units are typically the scattering angle
-$2\theta$ or the scattering vector ($q=4\pi sin(\theta)/\lambda$).
+coordinates where the radial units are typically the scattering angle value 
+$2\theta$ or the momentum transfert $q=4\pi sin(\theta)/\lambda$.
 It provides in addition tools to calibrate the detector position, i.e. determine
 its location in space by means of Debye-Scherrer conical rings resulting from
 the intersection between the diffracted X-ray beam and the detector
 surface. The rings are ellipses when the detector is planar and slightly
 inclined.
-The related implementation in pyFAI v0.14, release forseen mid-2017 and still
+The related implementation in pyFAI v0.14, release foreseen mid-2017 and still
 under development. 
 The azimuthal integration is performed in two steps. 
 The first is a pixel-wise
@@ -203,7 +203,7 @@ The pyFAI integration scheme of multiple images taken at varying position has
 first been reported for  in  \cite{PyFAI_PDJ}. 
 The procedure is conceptually similar to the integration on a single image,
 except that the various histograms, all calculated over the same
-grid, are summed together, i.e. \textit{signals} and, separatly, 
+grid, are summed together, i.e. \textit{signals} and, separately, 
 \textit{normalisations} from all images as follows: 
 
 \begin{equation}
@@ -236,12 +236,12 @@ For non planar detectors (also supported by pyFAI) these ``rings'' can
 be any curve.
 
 The least-square refinement is optimizing a set of six parameters
-(or seven adding the wavelength), defined around the definiton of Point
+(or seven adding the wavelength), defined around the  definition of Point
 Of Normal Incidence (hereafter named \textsc{poni}, Figure \ref{poni}), which is
 the orthogonal projection  of the sample position on the detector plane (or
 $z=d_3=0$ when the detector is non-planar and $z$ varies from pixel to pixel).
 This \textsc{poni} differs from the beam centre used in programs like
-Fit2D \cite{fit2d} since the \textsc{poni} is always defined and often lies
+Fit2D \cite{Hammersley:fs5107} since the \textsc{poni} is always defined and often lies
 within the detector's image, the detector gathering more photons 
 when facing the sample.
 
@@ -303,11 +303,16 @@ object, ready to perform the azimuthal integration.
 
 A semi-graphical calibration tool has been available as part of pyFAI
 \cite{fv5028} since the origin of the project but this tool was considered too
-difficult by unexperienced users (while well accepted among
-the beamline staff).
+difficult by inexperienced users.
+Thus, many groups have developed their own graphical user interface on top of
+pyFAI, often optimized for their very specific setup or experiment:
+Dioptas\cite{dioptas}, Dpdak\cite{dpdak}, NanoPeakCell\cite{nanopeakcell},
+PySAXS\cite{pysaxs}, WiSAXS, xPDFsuite\cite{xpdfsuite}\ldots
+
 Following the survey conducted among the beam-line scientists of the ESRF, a
 new graphical user interface design was developed, on top of the PyQt5 library
-\cite{pyqt} specifically focusing the needs of novice users.
+\cite{pyqt} specifically focusing the needs of novice users, but not on the
+type of experiment.
 The calibration of the experimental setup based on Debye-Scherrer rings 
 occurs in five steps:
 \begin{itemize}
@@ -327,7 +332,7 @@ This new graphical user interface takes advantage of the masking tools and HDF5
 browsing widgets developed in the frame of the \textit{silx} \cite{silx}
 project, which stream lines development efforts around data analysis.
 This new interface accounts for a simpler manual peak picking, and caters for
-automatic ring extraction, fitting of the gerometry and exporting of the
+automatic ring extraction, fitting of the geometry and exporting of the
 regrouped data.
 The results are stored in \textsc{poni}-file; in
 addition the list of control points used for the geometry fitting can be saved as \textsc{npt}-file.
@@ -369,7 +374,7 @@ addition the list of control points used for the geometry fitting can be saved a
 \end{figure}
 
 
-This new graphical user interface, althought still under development, is
+This new graphical user interface, although still under development, is
 already available in the development branch of pyFAI and will be distributed in the
 final version of pyFAI v0.14.
 
@@ -400,7 +405,7 @@ Calibrating the goniometer consists in:
   \item defining a set of parameters for the goniometer, of arbitrary size:
   $params = param_1, param_2, \ldots, param_m$),
   \item defining a \textit{transformation functions} $\Re$ which transforms the motor positions
-  and the goniometer parmaters into the six \textsc{poni}-parameters used by
+  and the goniometer parameters into the six \textsc{poni}-parameters used by
   pyFAI,
   \item optimizing the parameter set of the goniometer (\textit{params}) so that
   for any position of the motors, the detector position can be expressed as
@@ -543,7 +548,7 @@ does not improve the fit.
 Probably the main application of this work is to place a small size detector
 on a goniometer $2\theta$ arm. 
 
-When the detector arm is moving verically, a simple \textit{geometry
+When the detector arm is moving vertically, a simple \textit{geometry
 transformation} is defined with $rot_2$ (in radians) as a
 linear transformation of the motor position, $pos$, (measured in degrees).
 The scale parameter, $scale = \pi / 180$, is used to convert degrees to radians, 
@@ -680,60 +685,64 @@ diffractometer geometries with their associated rotation matrices.
 This is already possible now but it does not yet allow the saving into and
 restoring from a file. 
 
-By moving the detector in front of the sample, one can fill up the
-gaps which exists in pixel detectors.
-Those gaps are known to be responsible for glitches
-when acquiring PDF data with high energy photons due to the
-polarization of the synchrotron beam, causing large anisotropy in the
+By moving the detector in front of the sample, one remove the effects of
+gaps which exist in pixel detectors.
+These gaps are known to be responsible for glitches
+when acquiring PDF data at high energy due to the
+polarisation of the synchrotron beam, causing large anisotropy in the
 diffracted signal. 
-A (couple of) simple move(s) of a few millimeters could be enough to
-solve this issue.
+A (couple of) simple displacements(s) of a few millimeters could be enough
+to resolve almost entirely this issue.
 
-Different generations of pixel detectors have seen their pixel size
-shrink:
+Different generations of pixel detectors have seen their pixel sizes
+shrinking:
 from $172 \mu m$ for the Pilatus, $130 \mu m$ for ImXPAD, $75 \mu m$ for the
-Eiger and $55 \mu m$ for Medipix-based chips \ldots, and probably less for
+Eiger and $55 \mu m$ for Medipix-based chips \ldots, and probably even less for
 future detectors.
 As the resolution of the powder diffraction diagram obtained is limited by the
-pixel size (and the distance of the detector), this shrinkage of pixel-size
-leads naturally to better resolved powder diffraction patterns. 
+pixel size (and the sample-detector distance), this shrinkage of
+pixel sizes leads naturally to a higher quality powder
+diffraction patterns.
 Unfortunately, to keep the surface of the detector constant, one would need
-to multiply the number of pixels by the square of this value, and the
-associated infrastructure for read-out and data-transfer. 
+to multiply the number of pixels by the square of the pixel size reduction
+factor, and the associated infrastructure for read-out and data transfer
+accordingly.
 Moving the detector in front of the sample offers a flexibility which
 partially removes this limitation.
 
 \section{Conclusion}
 
-The new graphical user interface for pyFAI has been developed to ease the
-calibration of the experimental setup with fixed detector, especially for first
-time users.
+The new graphical user interface of pyFAI has been developed to ease the
+calibration of an experimental setup with static detector, especially for
+novice users.
 The concept of calibration of the detector position has been extended to fit
 the detector position with the motion of a goniometer.   
-Once a few position of the goniometer have been calibrated, a model can
-be fitted to determine the detector position at any goniometer position. 
-By acquiring multiple images a various positions, images can be
-integrated together to provide a high-$q$ powder diffraction pattern of
+Once a few fixed positions of the goniometer have been calibrated, a model can
+be optimized to determine the detector position at any goniometer
+configuration.
+By acquiring multiple images at various positions, these images can be
+integrated all together to produce a high-$q$ powder diffraction pattern of
 quality equivalent to the one acquired with a much larger detector. 
  
 \ack{Acknowledgements}
 
 We would like to thank all ESRF beam-line teams for supporting the
 pyFAI development, and especially David Flot from the MX-group who provided the
-data of the translation table and the two CRG beamlines BM02 (D2AM) and BM20
+data of the translation table and the beam-lines BM02 (D2AM) and BM20
 (ROBL) for the goniometer data. 
-They gracefully provided beam-time and test-data to allow debugging this 
-goniometer optimization tool.
-We would also like to thank the French CNRS for financing the IR-DRX project
-in 2015 and 2016 which acted as a catalyzer on the goniometer refinement,
-and the other participants to the project, especially Serge Cohen from the
-Ipanema institute, the DiffAbs beamline and Frédéric-Emmanuel Picca from
+They gracefully provided beam time and test data to allow debugging this 
+goniometer optimisation tool.
+We would also like to thank the CNRS for financing the IR-DRX project
+in 2015 and 2016, which acted as a catalyzer on the goniometer refinement,
+and the other participants in the project, especially Serge Cohen from the
+Ipanema institute, the DiffAbs beam-line and Frédéric-Emmanuel Picca from
 Synchrotron Soleil.
-In the instrumentation division (ISDD) from ESRF  we would like to thank V. A.
-Solé, head of data analysis unit and leader of the \textit{silx} project, and all our
-colleagues from the silx project: Thomas Vincent, Henri Payno, Damien Naudet and
-Pierre Knobel for their support and ideas. 
-Finally we ackowledge Claudio Ferrero for the carefull proof-reading of the
+In the instrumentation services and development division (ISDD) from ESRF  we
+would like to thank V. Armando Solé, head of data analysis unit and leader of 
+the \textit{silx} project, and all our colleagues from the \textit{silx}
+project:
+Thomas Vincent, Henri Payno, Damien Naudet and  Pierre Knobel for their support and ideas. 
+Finally we acknowledge Claudio Ferrero for the careful proof-reading of the
 manuscript. 
 
 \bibliographystyle{iucr}
