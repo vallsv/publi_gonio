@@ -8,8 +8,8 @@ simple to start with for first-time users. Then a new tool based on Jupyter note
 to be able to calibrate the position of a detector mounted on a goniometer arm.   
 This requires some know-how in Python programming but open doors for many 
 beam-lines with limited credits and only small detectors. The procedure has been
-validates with data from a couple of other beam-lines, in addition to the example 
-described in the manuscript (ESRF-ID28 & D2AM CRG beamline).   
+validates with data from a couple of beam-lines, in addition to the example 
+described in the manuscript.   
 
 While pyFAI is an open source software, this very recent work is not yet part of 
 any release of the software. We would like to provide you (and the reviewers) with 
@@ -30,4 +30,7 @@ At Petra-III, the powder diffraction beam-line has also a number of scientists
 very fluent in Python. 
 If you or any reviewer are interested in the raw data, we made them available at 
 http://ftp.edna-site.org/pyFAI/gonio/   
-  
+
+With my best regards,
+
+Jerome Kieffer  

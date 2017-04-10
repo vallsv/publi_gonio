@@ -5,7 +5,7 @@
 % Version 1.2 (11 December 2002)
 %------------------------------------------------------------------------------
 %
-\documentclass[preprint, pdf]{iucr}              % DO NOT DELETE THIS LINE
+\documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
                    \def\href#1{\relax}\let\foo\caption
 \ifPDF
   \RequirePackage{hyperref}
@@ -31,8 +31,8 @@
 
 \begin{document}                  % DO NOT DELETE THIS LINE
 
-\title{Calibration of experimental setups with {pyFAI}: New tools for still
-detector and moving detectors}
+\title{Calibration of experimental setups with {pyFAI}: New tools for static
+and moving detectors}
 \shorttitle{Calibration tools in pyFAI w/wo goniometer}
 
  \author[a]{V.}{Valls}
@@ -48,6 +48,7 @@ detector and moving detectors}
 \keyword{translation table}
 \keyword{goniometer}
 \keyword{geometry calibration}
+\keyword{pair distribution function}
 
 
 
@@ -141,7 +142,7 @@ there are coupled with encoders.
 
 PyFAI is a Python \cite{python} library used to transform 2D diffraction images into
 1D powder diffraction patterns by re-binning the pixel positions in polar
-coordinates where the radial units are typically the scattering angle value 
+coordinates where the radial units are typically the scattering angle  
 $2\theta$ or the momentum transfert $q=4\pi sin(\theta)/\lambda$.
 It provides in addition tools to calibrate the detector position, i.e. determine
 its location in space by means of Debye-Scherrer conical rings resulting from
@@ -306,7 +307,7 @@ A semi-graphical calibration tool has been available as part of pyFAI
 difficult by inexperienced users.
 Thus, many groups have developed their own graphical user interface on top of
 pyFAI, often optimized for their very specific setup or experiment:
-Dioptas\cite{dioptas}, Dpdak\cite{dpdak}, NanoPeakCell\cite{nanopeakcell},
+Dioptas\cite{diopta_publi}, Dpdak\cite{dpdak}, NanoPeakCell\cite{nanopeakcell},
 PySAXS\cite{pysaxs}, WiSAXS, xPDFsuite\cite{xpdfsuite}\ldots
 
 Following the survey conducted among the beam-line scientists of the ESRF, a
@@ -661,18 +662,19 @@ of magnitude shorter than previously, thus opening new prospects for
 the ROBL beamline.
 
 A third example of goniometer calibration is available in the Supplementary
-Material. It corresponds to the calibration of an ImXPAD detector composed
-of 8 stripes of 7 modules, many of which are defective.
+Material called D2AM-15. It corresponds to the calibration of an ImXPAD detector
+composed of 8 stripes of 7 modules, many of which are defective.
 This detector is mounted on the goniometer arm at the D2AM beam-line, French CRG
 at the ESRF synchrotron. 
 This example is conceptually the same as the the one from the ROBL beam-line,
 with a few differences:
 \begin{itemize}
+  \item all images are fitted directly with 8 $dof$.
   \item the detector being larger, the calculation time is
-longer,
-  \item the mask needs some extra care to remove the hot pixels
+        longer, especially when it comes to ring extraction
+  \item the mask needs some extra care to remove a few hot pixels
   \item the detector is mounted rotated of 90 degrees on the arm, this is why
-  $rot_3=\pi/2$
+  $rot_3=\pi/2$.
 \end{itemize}
 
 \section{Outlook}
