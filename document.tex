@@ -5,7 +5,7 @@
 % Version 1.2 (11 December 2002)
 %------------------------------------------------------------------------------
 %
-\documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
+\documentclass[preprint, pdf]{iucr}              % DO NOT DELETE THIS LINE
                    \def\href#1{\relax}\let\foo\caption
 \ifPDF
   \RequirePackage{hyperref}
@@ -36,12 +36,15 @@ and moving detectors}
 \shorttitle{Calibration tools in pyFAI w/wo goniometer}
 
  \author[a]{V.}{Valls}
+ \author[a]{D.}{Flot}
+ \author[a]{C.}{Hennig}
+ \author[a]{N.}{Blanc}
  \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
  
  
  \aff[a]{ESRF, The European Synchrotron, CS40220, 38043 \city{Grenoble}
  Cedex 9, \country{France}}
- \shortauthor{Valls and Kieffer}
+ \shortauthor{Valls & Kieffer}
 
 
 \keyword{Powder diffraction}
@@ -90,23 +93,23 @@ scattering, \ldots).
 % The still position of the detector during the acquisition, makes also
 %easier the data-reduction step.
 Using a fixed position setup combined with the speed of modern detectors (up
-to a few kHz) the data acquisition in kinetic mode is easily performed to 
-follow chemical reactions or other physical processes.
+to a few kHz) the data acquisition \textit{in situ} is easily
+performed to follow chemical reactions or other physical processes.
 Even with fixed geometries, determining the detector's position is
 still an issue for a majority of users. 
-Hence, a new graphical user interface has been developed for pyFAI, focusing
-on the user's experience to grant them autonomy in data analysis, once they
-are back in their home institutes.
+Hence, a new graphical user interface has been developed for pyFAI
+\cite{pyFAI_0.14.1}, focusing on the user's experience to grant them autonomy in
+data analysis, once they are back in their home institutes.
 
-Differently from large facilities, lab source diffractometers
+Differently from large facilities, laboratory source diffractometers
 are commonly equipped with (small) area detectors mounted on moveable goniometer
 arms for powder diffraction (for example, the Rigaku HyPix-3000 detector),
 %The larger number of pixels trades-of the resolution for speed.
-Whereas detectors at synchrotrons are often mounted on goniometer or
+whereas detectors at synchrotrons are often mounted on goniometer or
 translation tables, those degrees of freedom are rarely used for data
 acquisition.
 One counter-example is reported in \cite{Gao:kc5032}, where the beam-line
-is equipped with a moving strip-detector, the Mythen detector from Dectris,
+is equipped with a moving strip-detector, the Mythen detector (1D) from Dectris,
 which is not an area detector.
 
 %On the opposite, moving detector setups are rarely
@@ -121,52 +124,55 @@ detectors and higher energies to be able to cover the needed high $q$-range in
 one single frame \cite{Chupas:wf5000}.
 When speed is not critical, \textsc{pdf} experiments could be performed
 with smaller detectors mounted on a motorized arm, and moved in front of
-the sample during the data acquisition. 
+the sample during the data acquisition to cover a larger solid angle. 
 This kind of setup is actually already available on most diffraction
 beam-lines. 
 A new pyFAI module dealing with goniometers, along with
 a couple of \textit{Jupyter Notebooks}
 \cite{ipython}, proposed as supplementary materials, is presented.
 
-The pyFAI library \cite{fv5028}, is briefly recalled then the way how to
+The pyFAI library \cite{fv5028}, is briefly introduced then the way how to
 merge multiple diffraction images acquired at different positions with this
 library \cite{PyFAI_PDJ} is illustrated. 
 After summarizing how calibration works in pyFAI, the new graphical user
 interface is presented.
 Finally, the procedure on how to calibrate the absolute position of
 every single pixel in the detector when mounted on a goniometer (or on a
-translation table) as a function of the goniometer motor positions, assuming
-there are coupled with encoders. 
+translation table) as a function of the goniometer motor positions, is
+described assuming there are coupled with encoders. 
 
 \section{The Python Fast Azimuthal Integration library (pyFAI)}
 
 PyFAI is a Python \cite{python} library used to transform 2D diffraction images into
 1D powder diffraction patterns by re-binning the pixel positions in polar
-coordinates where the radial units are typically the scattering angle  
+coordinate. 
+The radial units are typically the scattering angle  
 $2\theta$ or the momentum transfert $q=4\pi sin(\theta)/\lambda$.
-It provides in addition tools to calibrate the detector position, i.e. determine
-its location in space by means of Debye-Scherrer conical rings resulting from
-the intersection between the diffracted X-ray beam and the detector
-surface. The rings are ellipses when the detector is planar and slightly
-inclined.
-The related implementation in pyFAI v0.14, release foreseen mid-2017 and still
-under development. 
+It provides in addition tools to calibrate the detector position, i.e.
+to determine its location in space by means of Debye-Scherrer conical rings
+resulting from the intersection of the diffracted X-ray beam with the
+detector surface. 
+The rings are deformed into ellipses when the detector is planar but 
+slightly inclined. 
 The azimuthal integration is performed in two steps. 
 The first is a pixel-wise
 transformation corresponding to the image correction:
 
 \begin{equation}
 I_{cor} = \frac{signal}{normalisation}  = \frac{I_{raw} - I_{dark}}{F \times
-\Omega \times P \times A } 
+\Omega \times P \times A \times I_0} 
 \end{equation}
 
 where $I_{raw}$ is the detector's raw signal, $I_{dark}$ is the dark current
 image (it may also be the background image for certain experiments), $F$ is a 
 factor accounting for the flat-field correction, $\Omega$ is the solid
-angle subtended by a given pixel, $P$ is the polarisation correction term
-and $A$ represents the detector apparent efficiency due to the incidence angle
-of the photon on the detector (for integrating detectors, high energy
-photons with larger incidence angle see larger sensor thickness).
+angle subtended by a given pixel, $P$ is the polarisation correction term and
+$A$ represents the detector's apparent efficiency due to the incidence angle of the
+photon on the detector (for integrating detectors, high energy photons with
+larger incidence angle see larger sensor thickness, and thus have higher
+detection probablility).
+$I_{raw}$ may be normalized by the incomming flux $I_0$, which is
+idependent of the pixel position.
 The numerator of (1), will be here after referred to as
 \textit{signal}, whilst the denominator will be referred to as
 \textit{normalisation}.
@@ -193,9 +199,17 @@ respective $c_i$ coefficients.
 Simple weighted histograms correspond actually to no splitting at all; in this
 case $c_i$ is 1 only for pixels falling in the corresponding bin an 0 for all
 the others.
-  
+
+This is an improvement over former versions of pyFAI where pixels with
+smaller area, further away from the sample or weaker where over represented in
+the statistics :
+\begin{equation}
+<I>_{ring} = \frac{\sum\limits_{i \in ring} \frac{ c_i \times
+signal_i}{normalisation_i}} {\sum\limits_{i \in ring} c_i} 
+\end{equation}
+
 The multiple pixel splitting schemes have already been described in
- \cite{fv5028} and can be stored as sparse matrices to accelerate the
+ \citeasnoun{fv5028} and can be stored as sparse matrices to accelerate the
  calculation of the histograms  \cite{kieffer_ashiotis-proc-euroscipy-2014}.
 
 \section{Azimuthal integration of multiple frames taken at multiple geometries}
@@ -217,7 +231,7 @@ The normalization for solid angle correction $\Omega$ has to be performed
 using an absolute solid angle reference system (unlike the case of single
 frame integration) as different geometries may have very different
 sample-to-detector distances.
-Hence single image integrated intensity in multi-geometry mode is by orders of
+Hence single image integrated intensity in multi-geometry mode is orders of
 magnitude larger than using the ``normal'' pyFAI integration methods.
 
 \section{Calibration of the detector position}
@@ -249,7 +263,7 @@ when facing the sample.
 \begin{figure}
 \label{poni}
 \begin{center}
-\includegraphics[width=9cm]{images/PONI.png}
+\includegraphics[width=15cm]{images/PONI.png}
 \caption{Geometry used in pyFAI.}
 \end{center}
 \end{figure}
@@ -274,26 +288,24 @@ The parameters to be refined are the following:
 
 This parameter set describes any detector position in
 space.
-The drawback is that some parameters are correlated: 
+The drawback is that some parameters are correlated or not optimized: 
 \begin{itemize}
-  \item \textit{dist-wavelength}: reducing the wavelength is equivalent to
-  increasing the distance unless the diffraction angle $2\theta$ is actually
+  \item \textit{dist-wavelength}: reducing the wavelength is nearly equivalent
+  to increasing the distance unless the diffraction angle $2\theta$ is actually
   large ($>30^o$). 
   It is advisable to fix one of the two variable unless the data are good
   quality and the scattering angles are large.
   \item $rot_1$-$poni_2$ and $rot_2$-$poni_1$, as small rotations can be
-  interpreted as larger translations. 
+  mistaken for larger translations. 
   Fixing one of the two decreases the uncertainty of the other by two orders of
   magnitude.
+  \item $rot_3$ cannot be refined as Debye-Scherrer cones are invariant by
+  rotation around the incoming beam.
 \end{itemize}
-
-Due to the azimuthal symmetry of the Debye-Scherrer cones, $rot_3$ 
-is never refined and stays at zero unless specified differently.  
-This can be used to simulate the azimuthal rotation of the
-experimental setup. 
-It has no effect in most cases, except for the
-polarisation of the incident beam, which is the
-main anisotropic contribution to the signal.
+ 
+The parameter $rot_3$ can be used to simulate the azimuthal rotation of
+the experimental setup or of the sample, for example when calculating pole
+figure.
 
 The calibration parameters are saved in text files with the ``.poni''
 extension, which contains also the detector definition and the wavelength.
@@ -303,19 +315,21 @@ object, ready to perform the azimuthal integration.
 \subsection{Graphical user interface}
 
 A semi-graphical calibration tool has been available as part of pyFAI
-\cite{fv5028} since the origin of the project but this tool was considered too
-difficult by inexperienced users.
+\cite{fv5028} since the origin of the project, but this tool was considered too
+difficult to use by inexperienced users.
 Thus, many groups have developed their own graphical user interface on top of
-pyFAI, often optimized for their very specific setup or experiment:
-Dioptas\cite{diopta_publi}, Dpdak\cite{dpdak}, NanoPeakCell\cite{nanopeakcell},
-PySAXS\cite{pysaxs}, WiSAXS, xPDFsuite\cite{xpdfsuite}\ldots
+pyFAI, often optimized for their a specific setup or experiment.
+For example: Dioptas \cite{diopta_publi} for high pressure, Dpdak \cite{dpdak}
+for SAXS, NanoPeakCell \cite{nanopeakcell} for serial crystallography,
+PySAXS \cite{pysaxs}, WiSAXS, xPDFsuite \cite{xpdfsuite}\ldots
 
 Following the survey conducted among the beam-line scientists of the ESRF, a
-new graphical user interface design was developed, on top of the PyQt5 library
-\cite{pyqt} specifically focusing the needs of novice users, but not on the
-type of experiment.
+new graphical user interface design was developed, based on the PyQt5
+library \cite{pyqt} and specifically focusing on the needs of novice users, but
+not on the type of experiment.
 The calibration of the experimental setup based on Debye-Scherrer rings 
-occurs in five steps:
+is carried out in five steps and presented as a software wisard with five
+subsequent tabs in the graphical interface:
 \begin{itemize}
   \item Experimental settings: select wavelength, calibrant and detector (Figure
   \ref{calib_1}),
@@ -375,9 +389,8 @@ addition the list of control points used for the geometry fitting can be saved a
 \end{figure}
 
 
-This new graphical user interface, although still under development, is
-already available in the development branch of pyFAI and will be distributed in the
-final version of pyFAI v0.14.
+This new graphical user interface is available as \textit{pyFAI-calib2}
+command.
 
 \section{Calibration of a detector on a moving stage}
 
