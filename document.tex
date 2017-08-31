@@ -17,6 +17,7 @@
 \usepackage{graphicx}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+ \usepackage{amsmath}
 %\usepackage{eps2pdf}
 
  \paperprodcode{a000000}      % Replace with production code if known
@@ -36,6 +37,7 @@ and moving detectors}
 \shorttitle{Calibration tools in pyFAI w/wo goniometer}
 
  \author[a]{V.}{Valls}
+ \author[a]{J.}{P.}{Wright}
  \author[a]{D.}{Flot}
  \author[a]{C.}{Hennig}
  \author[a]{N.}{Blanc}
@@ -147,7 +149,7 @@ PyFAI is a Python \cite{python} library used to transform 2D diffraction images 
 1D powder diffraction patterns by re-binning the pixel positions in polar
 coordinate. 
 The radial units are typically the scattering angle  
-$2\theta$ or the momentum transfert $q=4\pi sin(\theta)/\lambda$.
+$2\theta$ or the momentum transfert $q=4\pi \sin(\theta)/\lambda$.
 It provides in addition tools to calibrate the detector position, i.e.
 to determine its location in space by means of Debye-Scherrer conical rings
 resulting from the intersection of the diffracted X-ray beam with the
@@ -283,12 +285,45 @@ The parameters to be refined are the following:
   laboratory reference system.
   The detector is first rotated around the vertical axis ($rot_1$), then
   around the horizontal axis ($rot_2$) and in the end around the
-  incoming beam direction ($rot_3$).
+  incoming beam direction ($rot_3$). In a more mathematical way, this gives:
+\begin{equation}
+	R = R_3 \cdot R_2 \cdot R_1 
+\end{equation}
+where
+\begin{equation} 	
+	\begin{bmatrix}
+	1 & 0 & 0\\
+	0 & \cos(rot_1) & -\sin(rot_1) \\
+	0 & \sin(rot_1) & \cos(rot_1) \\
+	\end{bmatrix}
+\end{equation}
+\begin{equation} 		
+	R_2 =
+	\begin{bmatrix}
+	\co\cosot_2) & 0 & \sin(rot_2) \\
+	0 & 1 & 0 \\
+	-\sin(rot_1)&0 & \cos(rot_2) \\
+	\end{bmatrix}
+\end{equation}
+\begin{equation} 	
+	R_3 =
+	\begin{bmatrix}
+	\cos(rot_3) & -\sin(rot_3) & 0 \\
+	\sin(rot_3) & \cos(rot_3) & 0\\
+	0 & 0 & 1\\
+	\end{bmatrix}
+	\cdot 
+\end{equation}
+
+ It is worth mentioning the rotation $R_2$ is left-handed, while $R_1$ and 
+ $R_3$ are right-handed. Changing now $R_2$ would break the compatibility with
+ any former version of pyFAI.
 \end{itemize}
 
-This parameter set describes any detector position in
-space.
-The drawback is that some parameters are correlated or not optimized: 
+The strength of this parameter set is that it describes any detector position in
+space. 
+The drawback is that some parameters are correlated or not optimized:
+
 \begin{itemize}
   \item \textit{dist-wavelength}: reducing the wavelength is nearly equivalent
   to increasing the distance unless the diffraction angle $2\theta$ is actually
@@ -299,15 +334,17 @@ The drawback is that some parameters are correlated or not optimized:
   mistaken for larger translations. 
   Fixing one of the two decreases the uncertainty of the other by two orders of
   magnitude.
-  \item $rot_3$ cannot be refined as Debye-Scherrer cones are invariant by
-  rotation around the incoming beam.
+  \item $rot_3$ cannot be refined from Debye-Scherrer cones as they are
+  invariant by rotation around the incoming beam. The $rot_3$ parameter can be
+   assessed using an anisotropic contribution, like the polarization effect or
+  some  textures in the sample.
+  The parameter $rot_3$ can be used to simulate the azimuthal rotation of
+  the experimental setup or of the sample, for example when calculating pole
+  figure.
 \end{itemize}
  
-The parameter $rot_3$ can be used to simulate the azimuthal rotation of
-the experimental setup or of the sample, for example when calculating pole
-figure.
 
-The calibration parameters are saved in text files with the ``.poni''
+The calibration parameters are saved in a text file with the ``.poni''
 extension, which contains also the detector definition and the wavelength.
 This file can subsequently be loaded into an \textit{azimuthal integrator}
 object, ready to perform the azimuthal integration.
@@ -331,66 +368,82 @@ The calibration of the experimental setup based on Debye-Scherrer rings
 is carried out in five steps and presented as a software wisard with five
 subsequent tabs in the graphical interface:
 \begin{itemize}
-  \item Experimental settings: select wavelength, calibrant and detector (Figure
-  \ref{calib_1}),
-  \item Mask: a tool to mask unwanted regions/pixels of the
-  image (Figure \ref{calib_2}),
-  \item Peak picking: selects rings and assign them to ring numbers (Figure
+  \item{Experimental settings:} This first tab lets the user select
+  the wavelength (or the energy) used, the reference material used
+  for calibration (called calibrant) and chose the kind of detector among the
+  list of 50 provided or to define a spedific detector (Figure \ref{calib_1}),
+  \item{Mask drawing:} unwanted regions/pixels of the
+  image can be masked out based on their intensity or simply by
+  drawing polygons on the image. Different masks can be saved,
+  retrieved and assembled (Figure \ref{calib_2}),
+  \item{Peak picking:} Individual peaks and arc of rings can be segmented out
+  (automatically) and assign (manually) to different rings, each ring 
+  being associated with a single reflection of the calibrant (Figure
   \ref{calib_3}),
-  \item Geometry fitting: optimization of the detector position (Figure
-  \ref{calib_4}), 
-  \item Integration: carries out 1D and 2D integration of the image (Figure
-  \ref{calib_5}). 
+  \item{Geometry fitting:} At this stage, the detector position and
+  wavelength are fitted against peak positions and ring numbers. 
+  Any of the  parameters can be fixed or let free for refinement (Figure \ref{calib_4}).
+  The (calculated) positions of the beam center and the Point of Normal
+  Incidence and the expected positions of the rings are overlaid to the image
+  diffraction image to asses visually the quality of the fit.
+  \item{Integration:} This tab displays the  1D and 2D integrated patterns, also
+  called powder diffraction profile and cacked-image to further validate the
+  modelion of the image (Figure \ref{calib_5}). 
+  The algorithm for intgrating, the pixels splitting scheme and the radial unit
+  can also be selected. 
+  Diffraction profiles can be saved as text-files or images as well as the
+  experiment setup (\textsc{poni}-file) for subsequent use with other tools from
+  the pyFAI suite.
 \end{itemize}
 
-This new graphical user interface takes advantage of the masking tools and HDF5
-browsing widgets developed in the frame of the \textit{silx} \cite{silx}
-project, which stream lines development efforts around data analysis.
-This new interface accounts for a simpler manual peak picking, and caters for
-automatic ring extraction, fitting of the geometry and exporting of the
-regrouped data.
-The results are stored in \textsc{poni}-file; in
-addition the list of control points used for the geometry fitting can be saved as \textsc{npt}-file.
 
 \begin{figure}
 \label{calib_1}
 \begin{center}
-\includegraphics[width=9cm]{images/calibration-1-settings.png}
+\includegraphics[width=15cm]{images/calibration-1-settings.png}
 \caption{Energy, calibrant and detector setting in pyFAI.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_2}
 \begin{center}
-\includegraphics[width=9cm]{images/calibration-2-mask.png}
+\includegraphics[width=15cm]{images/calibration-2-mask.png}
 \caption{Mask drawing tool.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_3}
 \begin{center}
-\includegraphics[width=9cm]{images/calibration-3-peak-picking.png}
+\includegraphics[width=15cm]{images/calibration-3-peak-picking.png}
 \caption{Peak picking tool and ring assignment.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_4}
 \begin{center}
-\includegraphics[width=9cm]{images/calibration-4-fitting.png}
-\caption{Selection of the fit parameters.}
+\includegraphics[width=15cm]{images/calibration-4-fitting.png}
+\caption{Selection of the fit parameters and validation of the model.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_5}
 \begin{center}
-\includegraphics[width=9cm]{images/calibration-5-integration-result.png}
+\includegraphics[width=15cm]{images/calibration-5-integration-result.png}
 \caption{1D/2D integration interface.}
 \end{center}
 \end{figure}
 
+This new graphical user interface is now available with the
+\textit{pyFAI-calib2} command and accounts for a simpler manual peak picking,
+and caters for automatic ring extraction, fitting of the geometry and exporting
+of the regrouped data. 
+All graphical interfaces in pyFAI take advantage of the masking tools and HDF5
+browsing widgets developed in the frame of the \textit{silx}
+project \cite{silx_v0.5.0}, which stream lines development efforts around data
+analysis. 
+Diffraction image formats are still managed by the FabIO
+library \cite{fabio_v0.5.0} which support dozens of file-formats.
 
-This new graphical user interface is available as \textit{pyFAI-calib2}
-command.
 
 \section{Calibration of a detector on a moving stage}
 
@@ -404,9 +457,9 @@ as small as 80x120 pixels).
 
 \subsection{Transformation of geometry}
 
-This time, the difficulty is not in the calibration, but  rather in the
-variety of goniometers and translation tables which may be controlled by one or multiple
-motors.
+Here, the difficulty is not in the calibration, but rather in the
+variety of goniometers and translation tables which may be controlled by one or 
+multiple motors.
 %These motors are usually coupled with encoders, such as the actual position of
 %the motors is known precisely.
 The goniometer description implemented in pyFAI accepts an
@@ -447,8 +500,8 @@ the wavelength.
 
 $$
 \Delta 2\theta = 2\theta _{exp} - 2\theta _{theo} =
-arctan(\frac{r(P_{pyFAI})}{d(P_{pyFAI})}) -  2 \times
-arcsin(\frac{\lambda}{2d})
+\arctan(\frac{r(P_{pyFAI})}{d(P_{pyFAI})}) -  2 \times
+\arcsin(\frac{\lambda}{2d})
 $$
 
 
@@ -457,11 +510,11 @@ to optimise the \textit{params} using the \textit{scipy.optimize.minimize}
 function from SciPy \cite{scipy}.
 
 $$
-CostFunct = \frac{ \sum\limit_{i \in cp} {(\Delta 2\theta_i)^2}} {nb(cp)} 
-$$
+CostFunct = \frac{ \sum\limit_{i \in cp} {(\Delta 2\theta_i)^2}}
+{nb(ControlPoints)} $$
 
 From a computer engineering perspective, this \textit{transformation function}
-should also be serialisable to disk (actually in \textsc{json}-format) to allow
+should also be serialisable to disk (e.g. in \textsc{json}-format) to allow
 its restoration from a file without having to re-perform the calibration. 
 To address this constraint, the \textit{NumExpr} library \cite{numexpr} is
 used, enabling the user to provide textual mathematical formulae with
@@ -472,7 +525,7 @@ The definition of this function is simply the instantiation of the
 \textit{pyFAI.goniometer.GeometryTransformation} class, with a list of
 motor and parameter names as well as a set of six formulae, one for each of
 the \textsc{poni}-parameters.
-This may appear complicated and is best explained by the two following examples.
+This will be explicited with the couple of following examples.
 
 \subsection{A simple example: the translation table}
 
@@ -480,12 +533,15 @@ At the  ESRF, the protein crystallography beam-lines use large pixel detectors
 (typically Pilatus 6M from Dectris) placed on a translation stage which allows
 collecting the data at the optimal distance: shorter sample-to-detector
 distances to explore the region for high-$q$ 
-or longer distances for better Bragg peak separation.
+or longer distances for better Bragg peak separation. 
 
-The ``MX-calibrate'' tool of PyFAI is available for calibrating many images
-taken at various distances.
-This can also be interpreted in terms of a goniometer setup (actually a
-translation table) where the sample-to-detector distance is modelled as a
+The content of this tutorial is available as a Jupyter
+notebook \cite{jupyter} and part of the official documentation of pyFAI:
+\cite{\translation_table}, directly visible in a web-browser. 
+
+The \textit{MX-calibrate} tool from the pyFAI suite is available for
+calibrating many images taken at various distances.
+This can also be interpreted in terms of a goniometer setup (actually a translation table) where the sample-to-detector distance is modelled as a
 simple linear function of the translation table position:
 
 \begin{verbatim}
