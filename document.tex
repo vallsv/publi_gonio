@@ -35,8 +35,9 @@
 \title{Calibration of experimental setups with {pyFAI}: New tools for static
 and moving detectors}
 \shorttitle{Calibration tools in pyFAI w/wo goniometer}
-
+ 
  \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
+
  \author[a]{V.}{Valls}
  \author[b,c]{N.}{Blanc}
  \author[d,e]{C.}{Hennig}
@@ -134,9 +135,7 @@ with smaller detectors mounted on a motorized arm, and moved in front of
 the sample during the data acquisition to cover a larger solid angle. 
 This kind of setup is actually already available on most diffraction
 beam-lines. 
-A new pyFAI module dealing with goniometers, along with
-a couple of \textit{Jupyter Notebooks}
-\cite{ipython}, proposed as supplementary materials, is presented.
+A new pyFAI module dealing with goniometers and moving detectors is also presented.
 
 The pyFAI library \cite{fv5028}, is briefly introduced then the way how to
 merge multiple diffraction images acquired at different positions with this
@@ -298,8 +297,8 @@ where
 \begin{equation} 	
 	\begin{bmatrix}
 	1 & 0 & 0\\
-	0 & \cos(rot_1) & -\sin(rot_1) \\
-	0 & \sin(rot_1) & \cos(rot_1) \\
+	0 & \cos(rot_1) & \sin(rot_1) \\
+	0 & -\sin(rot_1) & \cos(rot_1) \\
 	\end{bmatrix}
 \end{equation}
 \begin{equation} 		
@@ -320,8 +319,8 @@ where
 	\cdot 
 \end{equation}
 
- It is worth mentioning the rotation $R_2$ is left-handed, while $R_1$ and 
- $R_3$ are right-handed. Changing now $R_2$ would break the compatibility with
+ It is worth mentioning rotations $R_1$ and $R_2$ are left-handed, while 
+ $R_3$ is right-handed. Changing this now would break the compatibility with
  any former version of pyFAI.
 \end{itemize}
 
@@ -376,7 +375,7 @@ subsequent tabs in the graphical interface:
   \item{Experimental settings:} This first tab lets the user select
   the wavelength (or the energy) used, the reference material used
   for calibration (called calibrant) and chose the kind of detector among the
-  list of 50 provided or to define a spedific detector (Figure \ref{calib_1}),
+  list of 50 provided or to define a specific detector (Figure \ref{calib_1}),
   \item{Mask drawing:} unwanted regions/pixels of the
   image can be masked out based on their intensity or simply by
   drawing polygons on the image. Different masks can be saved,
@@ -405,36 +404,37 @@ subsequent tabs in the graphical interface:
 \begin{figure}
 \label{calib_1}
 \begin{center}
-\includegraphics[width=15cm]{images/calibration-1-settings.png}
-\caption{Energy, calibrant and detector setting in pyFAI.}
+\includegraphics[width=15cm]{images/1_experiment.png}
+\caption{Experiment settings tab: load the calibration image, set the energy, the calibrant and select the detector for the subsequent analysis.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_2}
 \begin{center}
-\includegraphics[width=15cm]{images/calibration-2-mask.png}
-\caption{Mask drawing tool.}
+\includegraphics[width=15cm]{images/2_mask.png}
+\caption{The mask drawing tool is used to exclude pixel from a threshold, or using a rectangular, polygonal or pencil selection.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_3}
 \begin{center}
-\includegraphics[width=15cm]{images/calibration-3-peak-picking.png}
-\caption{Peak picking tool and ring assignment.}
+\includegraphics[width=15cm]{images/3_picking.png}
+\caption{The peak-picking tool selects automatically groups of points which needs to be assigned the proper ring number.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_4}
 \begin{center}
-\includegraphics[width=15cm]{images/calibration-4-fitting.png}
-\caption{Selection of the fit parameters and validation of the model.}
+\includegraphics[width=15cm]{images/4_3d_view.png}
+\caption{The geometry fitting tab can constrains the fit of the geometry. 
+A 3D respresentation of the experimental setup allows visualizing the relative position of the sample, the direct beam and the detector.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_5}
 \begin{center}
-\includegraphics[width=15cm]{images/calibration-5-integration-result.png}
-\caption{1D/2D integration interface.}
+\includegraphics[width=15cm]{images/5_cake.png}
+\caption{The cake and integration tab displays the 1D and 2D integrated image with the ring position overlaid to validate the quality of the calibration.}
 \end{center}
 \end{figure}
 
@@ -760,8 +760,6 @@ many types of goniometer.
 The \textit{TransformationFunction} class presented in the notebook may be extended
 in the future to use \textit{libhkl} \cite{libhkl} which contains already many
 diffractometer geometries with their associated rotation matrices. 
-This is already possible now but it does not yet allow the saving into and
-restoring from a file. 
 
 By moving the detector relative to the sample, one can remove the
 effects of gaps which exist in pixel detectors.
