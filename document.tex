@@ -5,7 +5,7 @@
 % Version 1.2 (11 December 2002)
 %------------------------------------------------------------------------------
 %
-\documentclass[preprint, pdf]{iucr}              % DO NOT DELETE THIS LINE
+\documentclass[preprint]{iucr}              % DO NOT DELETE THIS LINE
                    \def\href#1{\relax}\let\foo\caption
 \ifPDF
   \RequirePackage{hyperref}
@@ -105,7 +105,7 @@ performed to follow chemical reactions or other physical processes.
 Even with fixed geometries, determining the detector's position is
 still an issue for a majority of users. 
 Hence, a new graphical user interface has been developed for pyFAI
-\cite{pyFAI_0.14.1}, focusing on the user's experience to grant them autonomy in
+\cite{pyFAI_0.18}, focusing on the user's experience to grant them autonomy in
 data analysis, once they are back in their home institutes.
 
 Differently from large facilities, laboratory source diffractometers
@@ -268,7 +268,7 @@ when facing the sample.
 \begin{figure}
 \label{poni}
 \begin{center}
-\includegraphics[width=15cm]{images/PONI.png}
+\includegraphics[width=15cm]{images/PONI}
 \caption{Geometry used in pyFAI.}
 \end{center}
 \end{figure}
@@ -385,10 +385,11 @@ subsequent tabs in the graphical interface:
   \ref{calib_3}),
   \item{Geometry fitting:} At this stage, the detector position and
   wavelength are fitted against peak positions and ring numbers. 
-  Any of the  parameters can be fixed or let free for refinement (Figure \ref{calib_4}).
+  Any of the  parameters can be fixed or let free for refinement.
   The (calculated) positions of the beam center and the Point of Normal
   Incidence and the expected positions of the rings are overlaid to the image
-  diffraction image to asses visually the quality of the fit.
+  diffraction image in 2D to asses visually the quality of the fit. Sample, detector 
+  and direct beam can also be visualized in 3D(Figure \ref{calib_4}). 
   \item{Integration:} This tab displays the  1D and 2D integrated patterns, also
   called powder diffraction profile and cacked-image to further validate the
   modelion of the image (Figure \ref{calib_5}). 
@@ -399,32 +400,31 @@ subsequent tabs in the graphical interface:
   the pyFAI suite.
 \end{itemize}
 
-
 \begin{figure}
 \label{calib_1}
 \begin{center}
-\includegraphics[width=15cm]{images/1_experiment.png}
+\includegraphics[width=15cm]{images/1_experiment}
 \caption{Experiment settings tab: load the calibration image, set the energy, the calibrant and select the detector for the subsequent analysis.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_2}
 \begin{center}
-\includegraphics[width=15cm]{images/2_mask.png}
+\includegraphics[width=15cm]{images/2_mask}
 \caption{The mask drawing tool is used to exclude pixel from a threshold, or using a rectangular, polygonal or pencil selection.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_3}
 \begin{center}
-\includegraphics[width=15cm]{images/3_picking.png}
+\includegraphics[width=15cm]{images/3_picking}
 \caption{The peak-picking tool selects automatically groups of points which needs to be assigned the proper ring number.}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_4}
 \begin{center}
-\includegraphics[width=15cm]{images/4_3d_view.png}
+\includegraphics[width=15cm]{images/4_3d_view}
 \caption{The geometry fitting tab can constrains the fit of the geometry. 
 A 3D respresentation of the experimental setup allows visualizing the relative position of the sample, the direct beam and the detector.}
 \end{center}
@@ -432,7 +432,7 @@ A 3D respresentation of the experimental setup allows visualizing the relative p
 \begin{figure}
 \label{calib_5}
 \begin{center}
-\includegraphics[width=15cm]{images/5_cake.png}
+\includegraphics[width=15cm]{images/5_cake}
 \caption{The cake and integration tab displays the 1D and 2D integrated image with the ring position overlaid to validate the quality of the calibration.}
 \end{center}
 \end{figure}
@@ -441,6 +441,8 @@ This new graphical user interface is now available with the
 \textit{pyFAI-calib2} command and accounts for a simpler manual peak picking,
 and caters for automatic ring extraction, fitting of the geometry and exporting
 of the regrouped data. 
+The online documentation of pyFAI contains a quick tutorial \cite{doc_gui}
+designed for novice users to provide them their geometry in a couple of minutes.  
 All graphical interfaces in pyFAI take advantage of the masking tools and HDF5
 browsing widgets developed in the frame of the \textit{silx}
 project \cite{silx_v0.5.0}, which stream lines development efforts around data
@@ -591,7 +593,7 @@ The blue curve correspond to this initial model refined; the two peaks look
 \begin{figure}
 \label{id29}
 \begin{center}
-\includegraphics[width=9cm]{images/TranslationTable.png}
+\includegraphics[width=9cm]{images/TranslationTable}
 \caption{Powder diffraction profile obtained from seven images acquired
 at various distances from 15 to 45 centimeters. 
 The translation table position is combined with 6 (resp. 8) parameter model
@@ -661,7 +663,7 @@ most have one ring and only a few images display 2 rings.
 \begin{figure}
 \label{workflow}
 \begin{center}
-\includegraphics[width=9cm]{images/workflow.png}
+\includegraphics[width=9cm]{images/workflow}
 \caption{Workflow used to calibrate a set of 121 Pilatus 100k images one a
 moving $2\theta$ arm and detailed in the \textit{Jupyter Notebook} of 
 \cite{rotation_pilatus}.}
@@ -698,7 +700,7 @@ the first ones looks exceedingly broad.
 \begin{figure}
 \label{bm20}
 \begin{center}
-\includegraphics[width=9cm]{images/gonio.png}
+\includegraphics[width=9cm]{images/gonio}
 \caption{Powder diffraction pattern obtained from 121 images acquired
 at goniometer angles ranging from 5 to 65 degrees. On the right-hand size,
 a close-up view on the first peak following a simple model (6 degrees of
@@ -717,7 +719,7 @@ are plotted in blue.
 \begin{figure}
 \label{bm20_10}
 \begin{center}
-\includegraphics[width=9cm]{images/gonio_10.png}
+\includegraphics[width=9cm]{images/gonio_10}
 \caption{Diffraction image taken with the goniometer arm at 10 degrees.
 The control points are in blue and the expected ring of the simple model
 ($rot2=f(pos)$) is the dashed red line. This highlights the need for $rot_1$
@@ -806,7 +808,7 @@ goniometer optimisation tool.
 We would also like to thank the CNRS for financing the IR-DRX project
 in 2015 and 2016, which acted as a catalyzer on the goniometer refinement,
 and the other participants in the project, especially Serge Cohen from the
-Ipanema institute, the DiffAbs and Cristak beam-lines and Frédéric-Emmanuel Picca 
+Ipanema institute, the DiffAbs and Cristal beam-lines and Frédéric-Emmanuel Picca 
 from Synchrotron Soleil.
 In the instrumentation services and development division (ISDD) from ESRF  we
 would like to thank V. Armando Solé, head of data analysis unit and leader of 
