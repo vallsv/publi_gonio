@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % This is the IUCr LaTeX 2e class macro file iucr.cls                        %
-% Copyright (c) 1998-2016 International Union of Crystallography             %
+% Copyright (c) 1998-2019 International Union of Crystallography             %
 %                                                                            %
 % Usage:                                                                     %
 %  \documentclass{iucr}               for Acta A/JAC/IUCrJ paper (default)   %
@@ -41,6 +41,9 @@
 % Author: Brian McMahon bm@iucr.org                                          %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ChangeLog:                                                                 %
+%   2.1.11                                                                   %
+%          2019-01-14  Reverts a bug fix in latex.ltx to facilitate handling %
+%                      of underscores in CIF dictionaries                    %
 %   2.1.10                                                                   %
 %          2016-01-28  Sets IT content to small page measure unless new      %
 %                      option "fullsize" specified                           %
@@ -222,8 +225,8 @@
 % \box5 (\journalreceived, journalaccepted); \box7 (\keyword)
 %
 % ====================== version and identifying label =======================
-\def\f@@{2016/01/28 }
-%\def\b@r{{\tiny IUCr macros version 2.1.10: \f@@ \hfill}}
+\def\f@@{2019/01/14 }
+%\def\b@r{{\tiny IUCr macros version 2.1.11: \f@@ \hfill}}
 \def\b@r{\relax}
 
 % ====================== some early conditionals declared ====================
@@ -2888,7 +2891,7 @@
   \fi
 \fi
 \ifPstyl@ %%%%%%%%%%%%%%%%%%%%%%%%%% PREPRINT STYLE %%%%%%%%%%%%%%%%%%%%%%%%%%
-  \def\b@r{{\tiny IUCr macros version 2.1.10: \f@@ \hfill}}
+  \def\b@r{{\tiny IUCr macros version 2.1.11: \f@@ \hfill}}
   \setlength{\textheight}{220mm}                 % Page dimensions
   \setlength{\textwidth}{143mm}
   \setlength{\topmargin}{0pt}
@@ -7508,12 +7511,21 @@
 \newif\ifneedpar\needparfalse
 \newif\ifneedrule\needruletrue  % need separator rule in category examples?
 
-% The next line is rather mysterious. For some reason the way in which \_ is
-% set up requires that it be instantiated in some hidden way like this:
-% undoubtedly a subtle bug, but this provides a workaround for current
-% dictionaries
+%vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+% The next block is rather hackish, but seems to be needed to get
+% underscores working properly in CIF dictionaries
+%
+% First, thanks to Scott Kostyshak for pointing out that an update to
+% latex.ltx in late 2019 (doubtless to fix a bug) needs to be backed
+% out to allow this initialisation to work in the document preamble
+\def\finsm@sh{\ht\z@\z@ \dp\z@\z@ \box\z@}
+%
+% For some unknown reason the way in which \_ is set up requires that it
+% be instantiated in some hidden way like this (undoubtedly a subtle bug,
+% but this provides a workaround for current dictionaries):
 \gdef\RHUBARB{\smash{$\phantom{\_}$}}%
   \RHUBARB% % hack - see above
+%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 \def\DATA#1{%
   \baselineskip10pt%
   \ckeytrue%
