@@ -24,17 +24,16 @@
  \paperref{xx9999}            % Replace xx9999 with reference code if known
  \papertype{IU}               % Indicate type of article
  \paperlang{english}          % Can be english, french, german or russian
- \journalcode{J}             % Indicate the journal to which submitted
- \journalyr{2017}
+ \journalcode{S}              % Indicate the journal to which submitted
+ \journalyr{2019}
  \journalreceived{\relax}
  \journalaccepted{\relax}
  \journalonline{\relax}
 
 \begin{document}                  % DO NOT DELETE THIS LINE
 
-\title{Calibration of experimental setups with {pyFAI}: New tools for static
-and moving detectors}
-\shorttitle{Calibration tools in pyFAI w/wo goniometer}
+\title{New tools for calibrating diffraction setups}
+\shorttitle{Calibration tools in pyFAI}
  
  \cauthor[a]{J.}{Kieffer}{jerome.kieffer@esrf.eu}
 
@@ -49,7 +48,7 @@ and moving detectors}
  \aff[c]{ESRF, The European Synchrotron, CS40220, 38043 \city{Grenoble}
  Cedex 9, \country{France}}
  \aff[d]{Helmholtz-Zentrum Dresden-Rossendorf, Institute of Resource Ecology, 
-Bautzner Landstrasse 400, 01328 \city{Dresden}, \contry{Germany}}
+Bautzner Landstrasse 400, 01328 \city{Dresden}, \country{Germany}}
  \aff[e]{The Rossendorf Beamline at ESRF, BP 220, 38043 \city{Grenoble}
  Cedex 9, \country{France}}
  \shortauthor{Kieffer & al.}
@@ -66,7 +65,7 @@ Bautzner Landstrasse 400, 01328 \city{Dresden}, \contry{Germany}}
 \maketitle                        % DO NOT DELETE THIS LINE
 
 \begin{synopsis}
-New tools to calibrate different types of scattering experiments : static
+New tools to calibrate different types of scattering experiments suitable for static
 and moving detectors.
 \end{synopsis}
 
@@ -681,7 +680,7 @@ guarantee some consistency between the four images.
 
 An initial simple model with a set of parameters where $rot_2$ is equal to the
 goniometer angle has first lead to convergence with some constraints and
-bounds (see Supplementary Materials).
+bounds.
 In a second step, twenty images in the neighbourhood of the first ones have been
 added to the model, their peaks extracted according to the initial model and the
 model refined using the control points from the twenty images.
@@ -753,6 +752,11 @@ with a few differences:
   $rot_3=\pi/2$.
 \end{itemize}
 
+This generic method has even been extended to strip detectors 
+like Mythen detector manufactured by Dectris as shown in the tutorial on the 
+calibration of the array of 9 Mythen detectors \cite{rotation_mythen}, mounted on 
+the goniometer arm of beamline Cristal at Synchrotron Soleil.  
+
 \section{Outlook}
 
 The goniometer description in this work can be adapted to
@@ -760,15 +764,6 @@ many types of goniometer.
 The \textit{TransformationFunction} class presented in the notebook may be extended
 in the future to use \textit{libhkl} \cite{libhkl} which contains already many
 diffractometer geometries with their associated rotation matrices. 
-
-By moving the detector relative to the sample, one can remove the
-effects of gaps which exist in pixel detectors.
-These gaps are known to be responsible for glitches
-when acquiring PDF data at high energy due to the
-polarisation of the synchrotron beam, causing large anisotropy in the
-diffracted signal. 
-A (couple of) simple displacements(s) of a few millimeters could be enough
-to resolve almost entirely this issue.
 
 Different generations of pixel detectors have seen their pixel sizes
 shrinking:
@@ -811,8 +806,8 @@ goniometer optimisation tool.
 We would also like to thank the CNRS for financing the IR-DRX project
 in 2015 and 2016, which acted as a catalyzer on the goniometer refinement,
 and the other participants in the project, especially Serge Cohen from the
-Ipanema institute, the DiffAbs beam-line and Frédéric-Emmanuel Picca from
-Synchrotron Soleil.
+Ipanema institute, the DiffAbs and Cristak beam-lines and Frédéric-Emmanuel Picca 
+from Synchrotron Soleil.
 In the instrumentation services and development division (ISDD) from ESRF  we
 would like to thank V. Armando Solé, head of data analysis unit and leader of 
 the \textit{silx} project, and all our colleagues from the \textit{silx}

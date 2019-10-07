@@ -11,7 +11,7 @@ beam-lines with limited credits and only small detectors. The procedure has been
 validates with data from a couple of beam-lines, in addition to the example 
 described in the manuscript.   
 
-While pyFAI is an open source software, this very recent work is not yet part of 
+While pyFAI is an open source software, this recent work is not yet part of 
 any release of the software. We would like to provide you (and the reviewers) with 
 the source of our work, if you wish to test or review our code.
 
