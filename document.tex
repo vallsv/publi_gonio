@@ -164,7 +164,7 @@ The first is a pixel-wise
 transformation corresponding to the image correction:
 
 \begin{equation}
-I_{cor} = \frac{signal}{normalisation}  = \frac{I_{raw} - I_{dark}}{F \times
+I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \times
 \Omega \times P \times A \times I_0} 
 \end{equation}
 
@@ -180,7 +180,7 @@ $I_{raw}$ may be normalized by the incomming flux $I_0$, which is
 idependent of the pixel position.
 The numerator of (1), will be here after referred to as
 \textit{signal}, whilst the denominator will be referred to as
-\textit{normalisation}.
+\textit{normalization}.
 
 The second step is the re-binning of the data, which is carried out 
 using a histogram of the $q$ or $2\theta$ values, weighted by the
@@ -194,7 +194,7 @@ The average signal over a ring is then simply the ratio of the two histograms:
 
 \begin{equation}
 <I>_{ring} = \frac{\sum\limits_{i \in ring} c_i \times signal_i}
-                  {\sum\limits_{i \in ring} c_i \times normalisation_i} 
+                  {\sum\limits_{i \in ring} c_i \times normalization_i} 
 \end{equation}
 
 In (2), $c_i$ corresponds to the fraction of a pixel area 
@@ -210,7 +210,7 @@ smaller area, further away from the sample or weaker where over represented in
 the statistics :
 \begin{equation}
 <I>_{ring} = \frac{\sum\limits_{i \in ring} \frac{ c_i \times
-signal_i}{normalisation_i}} {\sum\limits_{i \in ring} c_i} 
+signal_i}{normalization_i}} {\sum\limits_{i \in ring} c_i} 
 \end{equation}
 
 The multiple pixel splitting schemes have already been described in
@@ -224,7 +224,7 @@ first been reported for  in  \cite{PyFAI_PDJ}.
 The procedure is conceptually similar to the integration on a single image,
 except that the various histograms, all calculated over the same
 grid, are summed together, i.e. \textit{signals} and, separately, 
-\textit{normalisations} from all images as follows: 
+\textit{normalizations} from all images as follows: 
 
 \begin{equation}
 <I>_{ring} = \frac{\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
