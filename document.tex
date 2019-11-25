@@ -152,7 +152,7 @@ PyFAI is a Python \cite{python} library used to transform 2D diffraction images 
 1D powder diffraction patterns by re-binning the pixel positions in polar
 coordinate. 
 The radial units are typically the scattering angle  
-$2\theta$ or the momentum transfert $q=4\pi \sin(\theta)/\lambda$.
+$2\theta$ or the momentum transfer $q=4\pi \sin(\theta)/\lambda$.
 It provides in addition tools to calibrate the detector position, i.e.
 to determine its location in space by means of Debye-Scherrer conical rings
 resulting from the intersection of the diffracted X-ray beam with the
@@ -175,7 +175,7 @@ angle subtended by a given pixel, $P$ is the polarisation correction term and
 $A$ represents the detector's apparent efficiency due to the incidence angle of the
 photon on the detector (for integrating detectors, high energy photons with
 larger incidence angle see larger sensor thickness, and thus have higher
-detection probablility).
+detection probability).
 $I_{raw}$ may be normalized by the incoming flux $I_0$, which is
 independent of the pixel position.
 The numerator of equation (1), will be here after referred to as
@@ -254,7 +254,7 @@ the $2\theta$ values calculated for the different control points.
 %they are actually the conic intersections of the X-ray beam cones
 %with the detector plane.
 For non-planar detectors these ``rings'' can be any curve, while on planar 
-detectors in tranmission mode, they are simply ellipses.
+detectors in transmission mode, they are simply ellipses.
 
 
 The least-squares refinement is optimizing a set of six geometrical parameters
@@ -327,7 +327,7 @@ $R_3$ is right-handed. Changing this now would break the compatibility with
 any former version of pyFAI.
 \end{itemize}
 
-The strength of this parametrization is that it describes any detector position in
+The strength of this parameterization is that it describes any detector position in
 space. 
 The drawback is that some parameters are correlated or not optimized:
 
@@ -489,7 +489,7 @@ Calibrating the goniometer consists in:
   a \textsc{poni}-parameters set.
 \end{itemize}
 
-This \textit{tranformation function} takes hence motor names, and model-parameter names 
+This \textit{transformation function} takes hence motor names, and model-parameter names 
 with their associated values (obtained after fitting), and returns
 the six individual parameters used in \textit{pyFAI} to initialize an $AzimuthalIntegrator$; it can be formally
 expressed as:
@@ -524,7 +524,7 @@ CostFunct = \frac{ \sum\limit_{i \in cp} {(\Delta 2\theta_i)^2}}
 {nb(ControlPoints)} $$
 
 From a computer engineering perspective, this \textit{transformation function}
-should also be serialisable to disk (e.g. in \textsc{json}-format) to allow
+should also be serializable to disk (e.g. in \textsc{json}-format) to allow
 its restoration from a file without having to re-perform the calibration. 
 To address this constraint, the \textit{NumExpr} library \cite{numexpr} is
 used, enabling the user to provide textual mathematical formulae with
@@ -580,11 +580,11 @@ notebook \cite{ipython} and part of the official documentation of pyFAI:
 In addition, one can replay the notebook with Jupyter and the notebook is
 self consistent: all images are automatically downloaded and cells can be
 modified or adapted.
-The notbook presents the usage of the \textit{transformation function} class
+The notebook presents the usage of the \textit{transformation function} class
 together with the translation table refinement.
 Initially, this set of data was calibrated using the ``MX-calibrate'' tool
 that extracts automatically the control points from images taken at
-ESRF ID29 beam-lines (Protein crystallography beamline, energy: 12.75 keV) from
+ESRF ID29 beam-lines (Protein crystallography beam-line, energy: 12.75 keV) from
 the metadata written in the image headers, thus a set of control points is
 available prior to processing the data. 
 The translation table is calibrated using all control points
@@ -760,7 +760,7 @@ with a few differences:
 This generic method has even been extended to strip detectors 
 like Mythen detector manufactured by Dectris as shown in the tutorial on the 
 calibration of the array of 9 Mythen detectors \cite{rotation_mythen}, mounted on 
-the goniometer arm of beamline Cristal at Synchrotron Soleil.  
+the goniometer arm of beam-line Cristal at Synchrotron Soleil.  
 
 \section{Outlook}
 
@@ -808,7 +808,7 @@ data of the translation table and Nils Blanc and Christoph Hennig from the the
 beam-lines BM02 (D2AM) and BM20 (ROBL) (respectively) for the goniometer data. 
 They gracefully provided beam time and test data to allow debugging this 
 goniometer optimisation tool.
-We would also like to thank the CNRS for financing the IR-DRX project
+We would also like to thank the French CNRS for financing the IR-DRX project
 in 2015 and 2016, which acted as a catalyzer on the goniometer refinement,
 and the other participants in the project, especially Serge Cohen from the
 Ipanema institute, the DiffAbs and Cristal beam-lines and Frédéric-Emmanuel Picca 
@@ -818,8 +818,8 @@ would like to thank V. Armando Solé, head of data analysis unit and leader of
 the \textit{silx} project, and all our colleagues from the \textit{silx}
 project:
 Thomas Vincent, Henri Payno, Damien Naudet and  Pierre Knobel for their support and ideas. 
-Finally we acknowledge Carsten Detlefs and the late Claudio Ferrero for their help and careful
-proof-reading of the manuscript. 
+A great thank to Carsten Detlefs for his contribution to the documentation of the geometry in pyFAI. 
+Finally we would like to dedicate this article to our colleague and friend Claudio Ferrero, who passed suddenly away in 2018. 
 
 \bibliographystyle{iucr}
 \bibliography{biblio}
