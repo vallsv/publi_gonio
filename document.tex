@@ -113,7 +113,7 @@ are commonly equipped with (small) area detectors mounted on moveable goniometer
 arms for powder diffraction (for example, the Rigaku HyPix-3000 detector),
 %The larger number of pixels trades-of the resolution for speed.
 whereas detectors at synchrotrons are often mounted on goniometer or
-translation tables, those degrees of freedom are rarely used for data
+translation tables, those degrees of freedom (hereafter $dof$) are rarely used for data
 acquisition.
 One counter-example is reported in \cite{Gao:kc5032}, where the beam-line
 is equipped with a moving strip-detector, the Mythen detector (1D) from Dectris,
@@ -372,17 +372,16 @@ new graphical user interface design was developed, based on the PyQt5
 library \cite{pyqt} and specifically focusing on the needs of novice users, but
 not on the type of experiment.
 The calibration of the experimental setup based on Debye-Scherrer rings 
-is carried out in five steps and presented as a software wisard with five
-subsequent tabs in the graphical interface:
+is carried out in five steps and presented as a software wizard with five
+subsequent tabs within the graphical interface:
 \begin{itemize}
   \item{Experimental settings:} This first tab lets the user select
   the wavelength (or the energy) used, the reference material used
   for calibration (called calibrant) and chose the kind of detector among the
   list of 50 provided or to define a specific detector (Figure \ref{calib_1}),
-  \item{Mask drawing:} unwanted regions/pixels of the
-  image can be masked out based on their intensity or simply by
-  drawing polygons on the image. Different masks can be saved,
-  retrieved and assembled (Figure \ref{calib_2}),
+  \item{Mask drawing:} This tab allows to masked-out unwanted regions/pixels from the
+  image, either based on their intensity (thresholding) or simply by
+  drawing polygons on the image. Different masks can be saved, retrieved and assembled (Figure \ref{calib_2}),
   \item{Peak picking:} Individual peaks and arc of rings can be segmented out
   (automatically) and assign (manually) to different rings, each ring 
   being associated with a single reflection of the calibrant (Figure
@@ -390,17 +389,17 @@ subsequent tabs in the graphical interface:
   \item{Geometry fitting:} At this stage, the detector position and
   wavelength are fitted against peak positions and ring numbers. 
   Any of the  parameters can be fixed or let free for refinement.
-  The (calculated) positions of the beam center and the Point of Normal
-  Incidence and the expected positions of the rings are overlaid to the image
-  diffraction image in 2D to asses visually the quality of the fit. Sample, detector 
-  and direct beam can also be visualized in 3D(Figure \ref{calib_4}). 
-  \item{Integration:} This tab displays the  1D and 2D integrated patterns, also
-  called powder diffraction profile and cacked-image to further validate the
-  modelion of the image (Figure \ref{calib_5}). 
-  The algorithm for intgrating, the pixels splitting scheme and the radial unit
-  can also be selected. 
+  The (calculated) positions of the beam center and the \textsc{poni}
+  and the expected positions of rings are overlaid to the diffraction image
+  to assess visually the quality of the fit. Sample, detector 
+  and direct beam can also be visualized in 3D (Figure \ref{calib_4}). 
+  \item{Integration:} This tab displays the 1D and 2D integrated patterns, also
+  called powder diffraction profile and caked-image to further validate the
+  modelization of the experimental setup (Figure \ref{calib_5}). 
+  The algorithm for integrating, the pixels splitting scheme and the radial unit
+  can also be selected in this tab. 
   Diffraction profiles can be saved as text-files or images as well as the
-  experiment setup (\textsc{poni}-file) for subsequent use with other tools from
+  experimental setup description file (\textsc{poni}-file) for subsequent use with other tools from
   the pyFAI suite.
 \end{itemize}
 
@@ -415,14 +414,15 @@ subsequent tabs in the graphical interface:
 \label{calib_2}
 \begin{center}
 \includegraphics[width=15cm]{images/2_mask}
-\caption{The mask drawing tool is used to exclude pixel from a threshold, or using a rectangular, polygonal or pencil selection.}
+\caption{The mask drawing tool is used to exclude pixels using a rectangular, polygonal or pencil selection. 
+         Pixels can also be selected according to their value (thresholding)}
 \end{center}
 \end{figure}
 \begin{figure}
 \label{calib_3}
 \begin{center}
 \includegraphics[width=15cm]{images/3_picking}
-\caption{The peak-picking tool selects automatically groups of points which needs to be assigned the proper ring number.}
+\caption{The peak-picking tool selects automatically groups of points close to the clicked peaks which needs then to be assigned the proper ring number.}
 \end{center}
 \end{figure}
 \begin{figure}
@@ -449,7 +449,7 @@ The online documentation of pyFAI contains a quick tutorial \cite{doc_gui}
 designed for novice users to provide them their geometry in a couple of minutes.  
 All graphical interfaces in pyFAI take advantage of the masking tools and HDF5
 browsing widgets developed in the frame of the \textit{silx}
-project \cite{silx_v0.5.0}, which stream lines development efforts around data
+project \cite{silx_v0.5.0}, which stream-lines the development effort around data
 analysis. 
 Diffraction image formats are still managed by the FabIO
 library \cite{fabio_v0.5.0} which support dozens of file-formats.
@@ -481,21 +481,21 @@ Calibrating the goniometer consists in:
 \begin{itemize}
   \item defining a set of parameters for the goniometer, of arbitrary size:
   $params = param_1, param_2, \ldots, param_m$),
-  \item defining a \textit{transformation functions} $\Re$ which transforms the motor positions
-  and the goniometer parameters into the six \textsc{poni}-parameters used by
+  \item defining a \textit{transformation functions} $\Re$ which transforms motor positions
+  and goniometer parameters into the six \textsc{poni}-parameters used by
   pyFAI,
   \item optimizing the parameter set of the goniometer (\textit{params}) so that
   for any position of the motors, the detector position can be expressed as
   a \textsc{poni}-parameters set.
 \end{itemize}
 
-This \textit{tranformation function} contains hence the motor names, the
-parameter names with their associated values (obtained by fitting), and returns
-the six individual parameters used in \textit{pyFAI}; it can be formally
+This \textit{tranformation function} takes hence motor names, and model-parameter names 
+with their associated values (obtained after fitting), and returns
+the six individual parameters used in \textit{pyFAI} to initialize an $AzimuthalIntegrator$; it can be formally
 expressed as:
 
 \begin{equation}
-P_{pyFAI} = dist, poni_1, poni_2, rot_1, rot_2, rot_3 = \Re_{params}(motors)
+P_{pyFAI} = (dist, poni_1, poni_2, rot_1, rot_2, rot_3) = \Re_{params}(motors)
 \end{equation}
 
 
@@ -528,14 +528,14 @@ should also be serialisable to disk (e.g. in \textsc{json}-format) to allow
 its restoration from a file without having to re-perform the calibration. 
 To address this constraint, the \textit{NumExpr} library \cite{numexpr} is
 used, enabling the user to provide textual mathematical formulae with
-an arbitrary number of degrees of freedom for the goniometer and as many parameters
+an arbitrary number of $dof$ for the goniometer and as many parameters
 as needed.
 
 The definition of this function is simply the instantiation of the
 \textit{pyFAI.goniometer.GeometryTransformation} class, with a list of
-motor and parameter names as well as a set of six formulae, one for each of
+motor names, parameter names as well as a set of six formulae, one for each of
 the \textsc{poni}-parameters.
-This will be explicited with the couple of following examples.
+This will be explained in more details by the couple of examples.
 
 \subsection{A simple example: the translation table}
 
@@ -569,7 +569,7 @@ $poni_1$, $poni_2$, $rot_1$
 and $rot_2$. 
 $rot_3$ is forced to zero while the distance is defined as a 
 linear function of the motor position. 
-This makes actually six degrees of freedom  (\textit{dof}) to be refined.
+This makes actually six $dof$ to be refined.
 Motor names should be declared as a list and assigned to \textit{pos names}. 
 If no motor names are provided, a single motor  configuration (called $pos$)
 is assumed.
@@ -618,11 +618,11 @@ Its peaks are much sharper then previously and the residual cost is
 about $5\times$ smaller, indicating a much better fit.
 
 This example shows that the \textsc{poni} is moving on the detector
-plane by one millimetre per meter (1\textperthousand) horizontally and 
+plane by 1 \textperthousand horizontally and 
 4 \textperthousand vertically.
 This ``large'' vertical deviation has been confirmed by the beam-line staff and
-is related to the focussing mirror placed just before the sample, causing the
-beam to be no more horizontal.
+is related to the last focusing mirror placed just before the sample, causing the
+beam to dive.
 Once everything is fitted, the quality of the geometry obtained is perfectly
 suited to powder diffraction experiments for any detector position.
   
@@ -656,8 +656,8 @@ This example is also available as Jupyter notebbok available
 \cite{rotation_pilatus} and the workflow used is depicted in Figure \ref{workflow}.
 This experiment has been performed using a single module (100k) Pilatus
 detector which is mounted on a vertically moving $2\theta$ arm, varying 
-from 5 to 65 degrees by half degree step on the ROBL beam-line
-\cite{Kvashnina:vv5126},ESRF BM20.
+from 5 to 65 degrees by half degree steps on the ROBL beam-line
+\cite{Kvashnina:vv5126}, ESRF BM20.
 In this experiment, 121 diffraction images of LaB$_6$
 reference compound material have been acquired.
 Due to the small size of the detector (487x197 pixels),
@@ -668,8 +668,8 @@ most have one ring and only a few images display 2 rings.
 \label{workflow}
 \begin{center}
 \includegraphics[width=9cm]{images/workflow}
-\caption{Workflow used to calibrate a set of 121 Pilatus 100k images one a
-moving $2\theta$ arm and detailed in the \textit{Jupyter Notebook} of 
+\caption{Workflow used to calibrate the set of 121 Pilatus 100k images on a
+moving $2\theta$ arm and detailed in the \textit{Jupyter Notebook} given in  
 \cite{rotation_pilatus}.}
 \end{center}
 \end{figure}
@@ -677,7 +677,7 @@ moving $2\theta$ arm and detailed in the \textit{Jupyter Notebook} of
 The first images presenting two rings correspond to goniometer positions above
 30 degrees. 
 Four images, taken at goniometer angles of 31.5, 33 and 35 and 35.5
-degrees have been manually calibrated using the \textit{pyFAI-calib} tool
+degrees have been manually calibrated using the \textit{pyFAI-calib2} tool
 presented in the previous section.
 This manual calibration is rather tedious and unstable due to the small
 curvature of the rings on the detector image. 
@@ -697,7 +697,7 @@ After all constraints and bounds have been removed, the model has been refined
 again and used to generate a \textit{MultiGeometry} object, able to integrate many
 images together.
 After integration of all 121 images, the powder diffraction pattern displayed
-in Figure \ref{bm20}, orange curve is obtained.
+in Figure \ref{bm20}, orange curve, is obtained.
 All peaks of the curve appear at the correct scattering angle but
 the first ones looks exceedingly broad. 
 
@@ -707,9 +707,9 @@ the first ones looks exceedingly broad.
 \includegraphics[width=9cm]{images/gonio}
 \caption{Powder diffraction pattern obtained from 121 images acquired
 at goniometer angles ranging from 5 to 65 degrees. On the right-hand size,
-a close-up view on the first peak following a simple model (6 degrees of
-freedom, in orange) or according a model where two parameters are
-functions of the goniometer position (7 degrees of freedom, in blue).}
+a close-up view on the first peak following a simple model (6 $dof$,
+ in orange) or according a model where two parameters are
+functions of the goniometer position (7 $dof$, in blue).}
 \end{center}
 \end{figure}
 
@@ -717,7 +717,7 @@ functions of the goniometer position (7 degrees of freedom, in blue).}
 This broadening is confirmed by looking at the first ring's image, where the
 goniometer angle was set to 10 degrees (Figure \ref{bm20_10}).
 The expected position of the ring (dashed red line) does not correspond
-properly to the actual ring (yellow on the image). The control points extracted
+properly to the actual ring (yellow on the image). The extracted control points 
 are plotted in blue.
 
 \begin{figure}
@@ -731,14 +731,14 @@ to depend on the goniometer position.}
 \end{center}
 \end{figure}
 
-Another model was suggested, allowing also the $rot_1$ to depend linearly on the
+Another model was tested, allowing also the $rot_1$ value to scale with the 
 goniometer position. 
 After refinement, the cost function dropped by a factor two and
-the low angle peaks were sharp (blue curve in Figure \ref{bm20}). 
+the low angle peaks became sharp (blue curve in Figure \ref{bm20}). 
 
-This parameter set was saved and allowed a few compounds to be analysed and
+This parameter set was saved and allowed other few compounds to be analysed and
 compared to the same pattern recorded via a moving point detector. 
-The signal/noise ratio is better with an acquisition time of an order
+The signal/noise ratio was found to be better with an acquisition time which was one order
 of magnitude shorter than previously, thus opening new prospects for
 the ROBL beamline.
 
@@ -750,12 +750,11 @@ This detector is mounted on the goniometer arm at the D2AM beam-line
 This example is conceptually the same as the the one from the ROBL beam-line,
 with a few differences:
 \begin{itemize}
-  \item all images are fitted directly with 8 $dof$.
+  \item all images are fitted directly with 8 $dof$,
   \item the detector being larger, the calculation time is
-        longer, especially when it comes to ring extraction
-  \item the mask needs some extra care to remove a few hot pixels
-  \item the detector is mounted rotated of 90 degrees on the arm, this is why
-  $rot_3=\pi/2$.
+        longer, especially when it comes to ring extraction,
+  \item the mask needs some extra care to remove a few hot pixels,
+  \item the detector is mounted rotated by 90 degrees on the arm, thus $rot_3=\pi/2$.
 \end{itemize}
 
 This generic method has even been extended to strip detectors 
@@ -775,7 +774,7 @@ Different generations of pixel detectors have seen their pixel sizes
 shrinking:
 from $172 \mu m$ for the Pilatus, $130 \mu m$ for ImXPAD, $75 \mu m$ for the
 Eiger and $55 \mu m$ for Medipix-based chips \ldots, and probably even less for
-future detectors.
+future generation detectors.
 As the resolution of the powder diffraction diagram obtained is limited by the
 pixel size (and the sample-detector distance), this shrinkage of
 pixel sizes leads naturally to a higher quality powder
@@ -819,7 +818,7 @@ would like to thank V. Armando Solé, head of data analysis unit and leader of
 the \textit{silx} project, and all our colleagues from the \textit{silx}
 project:
 Thomas Vincent, Henri Payno, Damien Naudet and  Pierre Knobel for their support and ideas. 
-Finally we acknowledge Claudio Ferrero and Carsten Detlefs  for the careful
+Finally we acknowledge Carsten Detlefs and the late Claudio Ferrero for their help and careful
 proof-reading of the manuscript. 
 
 \bibliographystyle{iucr}
