@@ -244,27 +244,29 @@ magnitude larger than using the ``normal'' pyFAI integration methods.
 
 \subsection{Principle of the calibration using a Debye-Scherrer diffraction
 image}
-The calibration of a detector position is performed using the Debye-Scherrer
-rings collected from a reference powder called \textit{calibrant}.
+The calibration of a detector position is performed using a few Debye-Scherrer
+rings (minimum 2) collected from a reference powder called \textit{calibrant}.
 The rings are extracted automatically and control points are placed at the
 local maxima on the rings.
-The geometry of the experiment is obtained from least-square fitting of
-the $2\theta$ points.
+The geometry of the experiment is obtained from least-squares fitting of
+the $2\theta$ values calculated for the different control points.
 %In this work we will call them ``rings'' even if, for planar detector,
 %they are actually the conic intersections of the X-ray beam cones
 %with the detector plane.
-For non planar detectors (also supported by pyFAI) these ``rings'' can
-be any curve.
+For non-planar detectors these ``rings'' can be any curve, while on planar 
+detectors in tranmission mode, they are simply ellipses.
 
-The least-square refinement is optimizing a set of six parameters
-(or seven adding the wavelength), defined around the  definition of Point
-Of Normal Incidence (hereafter named \textsc{poni}, Figure \ref{poni}), which is
-the orthogonal projection  of the sample position on the detector plane (or
-$z=d_3=0$ when the detector is non-planar and $z$ varies from pixel to pixel).
-This \textsc{poni} differs from the beam centre used in programs like
-Fit2D \cite{Hammersley:fs5107} since the \textsc{poni} is always defined and often lies
-within the detector's image, the detector gathering more photons 
-when facing the sample.
+
+The least-squares refinement is optimizing a set of six geometrical parameters
+(seven when adding the energy), defined around the Point Of Normal Incidence 
+(hereafter named \textsc{poni}, Figure \ref{poni}).
+The \textsc{poni} is
+the orthogonal projection of the sample position on the detector plane (or
+the plane $z=d_3=0$ when the detector is non-planar and $z$ varies from pixel to pixel).
+This \textsc{poni} differs from the beam-center used in programs like
+Fit2D \cite{Hammersley:fs5107} since the \textsc{poni} is defined, 
+regardless to the tilt of the detector, and often lies
+within the detector's surface to gather a maximum amount of photons scattered from the sample.
 
 \begin{figure}
 \label{poni}
@@ -278,7 +280,7 @@ when facing the sample.
 The parameters to be refined are the following:
 \begin{itemize}
   \item $dist$: the distance (in metre) from the sample position to the
-  \textsc{poni}
+  \textsc{poni}.
   \item $poni_1$ and $poni_2$: space coordinates of the
   \textsc{poni} (in metre) within the detector plane ($z=d_3=0$) along the slow
   and the fast dimension of the detector image (1 and 2 usually refer to the row
@@ -294,7 +296,8 @@ The parameters to be refined are the following:
 	R = R_3 \cdot R_2 \cdot R_1 
 \end{equation}
 where
-\begin{equation} 	
+\begin{equation}
+	R_1 = 	
 	\begin{bmatrix}
 	1 & 0 & 0\\
 	0 & \cos(rot_1) & \sin(rot_1) \\
@@ -319,12 +322,12 @@ where
 	\cdot 
 \end{equation}
 
- It is worth mentioning rotations $R_1$ and $R_2$ are left-handed, while 
- $R_3$ is right-handed. Changing this now would break the compatibility with
- any former version of pyFAI.
+It is worth mentioning rotations $R_1$ and $R_2$ are left-handed, while 
+$R_3$ is right-handed. Changing this now would break the compatibility with
+any former version of pyFAI.
 \end{itemize}
 
-The strength of this parameter set is that it describes any detector position in
+The strength of this parametrization is that it describes any detector position in
 space. 
 The drawback is that some parameters are correlated or not optimized:
 
@@ -336,20 +339,20 @@ The drawback is that some parameters are correlated or not optimized:
   quality and the scattering angles are large.
   \item $rot_1$-$poni_2$ and $rot_2$-$poni_1$, as small rotations can be
   mistaken for larger translations. 
-  Fixing one of the two decreases the uncertainty of the other by two orders of
+  Fixing one of the two decreases the uncertainty of the other by a few orders of
   magnitude.
-  \item $rot_3$ cannot be refined from Debye-Scherrer cones as they are
+  \item $rot_3$ cannot be refined from Debye-Scherrer cones as they are, by definition,
   invariant by rotation around the incoming beam. The $rot_3$ parameter can be
    assessed using an anisotropic contribution, like the polarization effect or
   some  textures in the sample.
-  The parameter $rot_3$ can be used to simulate the azimuthal rotation of
+  This $rot_3$ parameter is also used to simulate the azimuthal rotation of
   the experimental setup or of the sample, for example when calculating pole
-  figure.
+  figures.
 \end{itemize}
  
 
-The calibration parameters are saved in a text file with the ``.poni''
-extension, which contains also the detector definition and the wavelength.
+The calibration parameters containing the geometry of the experimental setup are saved in a text file with the ``.poni''
+extension, which contains in addition the detector definition and the wavelength.
 This file can subsequently be loaded into an \textit{azimuthal integrator}
 object, ready to perform the azimuthal integration.
 
