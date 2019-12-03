@@ -164,8 +164,8 @@ The first is a pixel-wise
 transformation corresponding to the image correction:
 
 \begin{equation}
-I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \times
-\Omega \times P \times A \times I_0} 
+I_{cor} = \frac{signal}{normalization}  = \frac{I_{raw} - I_{dark}}{F \cdot
+\Omega \cdot P \cdot A \cdot I_0} 
 \end{equation}
 
 where $I_{raw}$ is the detector's raw signal, $I_{dark}$ is the dark current
@@ -178,38 +178,45 @@ larger incidence angle see larger sensor thickness, and thus have higher
 detection probability).
 $I_{raw}$ may be normalized by the incoming flux $I_0$, which is
 independent of the pixel position.
-The numerator of equation (1), will be here after referred to as
-\textit{signal}, whilst the denominator will be referred to as
-\textit{normalization}.
+The numerator of equation (1), will be here after referred as
+\textit{signal}, whilst the denominator will be referred as
+\textit{normalization}. 
+The \textit{variance} associated to the \textit{signal} has to be scaled in a similar way
+when considering error propagation.
 
 The second step is the re-binning of the data, which is carried out 
 using a histogram of the $q$ or $2\theta$ values, weighted by the
 \textit{signal}.
-This gives the sum of all \textit{signals} within a ring.
+This gives the sum of all \textit{signals} within a Debye-Scherrer ring.
 A second ($q-$ or $2\theta-$) histogram is calculated, weighted
 by the \textit{normalization} this time, which gives the sum of all
 normalised factors falling into the given bin.
 
-The average signal over a ring is then simply the ratio of the two histograms:
+The average signal over a ring is then simply the ratio of two histograms (2) 
+while its associated error, the standard error of the mean, is given by (3):
 
 \begin{equation}
-<I>_{ring} = \frac{\sum\limits_{i \in ring} c_i \times signal_i}
-                  {\sum\limits_{i \in ring} c_i \times normalization_i} 
+<I>_{ring} = \frac{\sum\limits_{i \in ring} c_i \cdot signal_i}
+                  {\sum\limits_{i \in ring} c_i \cdot normalization_i} 
+\end{equation}
+\begin{equation}
+\sigma(I_{ring}) = \frac{\sqrt{\sum\limits_{i \in ring} c_i^2 \cdot variance_i}}
+                  {\sum\limits_{i \in ring} c_i \cdot normalization_i} 
 \end{equation}
 
-In equation (2), $c_i$ corresponds to the fraction of a pixel area 
+In equations (2) and (3), $c_i \in [0..1]$ corresponds to the fraction of a pixel area 
 falling into a specific histogram bin. 
 PyFAI provides multiple pixel splitting schemes that differ only by their
 respective $c_i$ coefficients. 
-Simple weighted histograms correspond actually to no splitting at all; in this
-case $c_i$ is 1 only for pixels falling in the corresponding bin an 0 for all
+Simple un-weighted histograms correspond to deactivate pixel splitting; in this
+case $c_i$ is one only for pixels falling in the corresponding bin an zero for all
 the others.
 
 This is an improvement over former versions of pyFAI where pixels with
-smaller area, further away from the sample or weaker where over represented in
+smaller area, further away from the sample or weaker where overrepresented in
 the statistic :
 \begin{equation}
-<I>_{ring} = \frac{\sum\limits_{i \in ring} \frac{ c_i \times
+<I>_{ring} = \frac{\sum\limits_{i \in ring} \frac{ c_i \cdot
 signal_i}{normalization_i}} {\sum\limits_{i \in ring} c_i} 
 \end{equation}
 
@@ -228,8 +235,8 @@ grid, are summed together, i.e. \textit{signals} and, separately,
 \textit{normalizations} from all images as follows: 
 
 \begin{equation}
-<I>_{ring} = \frac{\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
-signal_i} {\sum\limits_{imges} \sum\limits_{i \in ring} c_i \times
+<I>_{ring} = \frac{\sum\limits_{imges} \sum\limits_{i \in ring} c_i \cdot
+signal_i} {\sum\limits_{imges} \sum\limits_{i \in ring} c_i \cdot
 normalization_i} 
 \end{equation}
 
@@ -282,8 +289,8 @@ The parameters to be refined are the following:
   \item $dist$: the distance (in metre) from the sample position to the
   \textsc{poni}.
   \item $poni_1$ and $poni_2$: space coordinates of the
-  \textsc{poni} (in metre) within the detector plane ($z=d_3=0$) along the slow
-  and the fast dimension of the detector image (1 and 2 usually refer to the row
+  \textsc{poni} (in metre) within the detector plane ($z=d_3=0$) along the slow-
+  and the fast-reading dimension of the detector image (1 and 2 usually refer to the row
   and the column axis, i.e. ``y, x'' respectively).
   \item $rot_1$, $rot_2$ and $rot_3$: the
   rotation angles (expressed in radians) of the detector placed at the proper
@@ -443,8 +450,8 @@ A 3D respresentation of the experimental setup allows visualizing the relative p
 
 This new graphical user interface is now available with the
 \textit{pyFAI-calib2} command and accounts for a simpler manual peak picking,
-and caters for automatic ring extraction, fitting of the geometry and exporting
-of the regrouped data. 
+performes automatic ring extraction, geometry fitting and exports 
+the regrouped data and the geometry. 
 The online documentation of pyFAI contains a quick tutorial \cite{doc_gui}
 designed for novice users to provide them their geometry in a couple of minutes.  
 All graphical interfaces in pyFAI take advantage of the masking tools and HDF5
@@ -509,7 +516,7 @@ the wavelength.
 
 $$
 \Delta 2\theta = 2\theta _{exp} - 2\theta _{theo} =
-\arctan(\frac{r(P_{pyFAI})}{d(P_{pyFAI})}) -  2 \times
+\arctan(\frac{r(P_{pyFAI})}{d(P_{pyFAI})}) -  2 \cdot
 \arcsin(\frac{\lambda}{2d})
 $$
 
@@ -705,7 +712,7 @@ the first ones looks exceedingly broad.
 \begin{center}
 \includegraphics[width=9cm]{images/gonio}
 \caption{Powder diffraction pattern obtained from 121 images acquired
-at goniometer angles ranging from 5 to 65 degrees. On the right-hand size,
+at goniometer angles ranging from 5 to 65 degrees. On the right-hand site,
 a close-up view on the first peak following a simple model (6 $dof$,
  in orange) or according a model where two parameters are
 functions of the goniometer position (7 $dof$, in blue).}
